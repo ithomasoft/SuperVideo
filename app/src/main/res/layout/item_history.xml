@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0.5dp"
+    android:background="@android:color/white">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_iv_video"
+        android:layout_width="64dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/app_logo" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="@android:color/primary_text_light"
+        android:textSize="14dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/item_iv_delete"
+        app:layout_constraintStart_toEndOf="@+id/item_iv_video"
+        app:layout_constraintTop_toTopOf="@+id/item_iv_video"
+        tools:text="长安十二时辰" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_tv_current_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/item_tv_time"
+        app:layout_constraintEnd_toStartOf="@+id/item_iv_delete"
+        app:layout_constraintStart_toEndOf="@+id/item_iv_video"
+        app:layout_constraintTop_toBottomOf="@+id/item_tv_name"
+        tools:text="第12集" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/item_tv_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_iv_video"
+        app:layout_constraintEnd_toStartOf="@+id/item_iv_delete"
+        app:layout_constraintStart_toEndOf="@+id/item_iv_video"
+        tools:text="2019-10-20" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_iv_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_delete" />
+</androidx.constraintlayout.widget.ConstraintLayout>

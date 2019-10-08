@@ -1,0 +1,350 @@
+package com.thomas.video.ui;
+
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.thomas.video.ApiConstant;
+import com.thomas.video.R;
+import com.thomas.video.base.BaseActivity;
+import com.thomas.video.bean.VideoDetailBean;
+import com.thomas.video.engine.ExoEngine;
+import com.thomas.video.engine.IjkEngine;
+import com.thomas.video.entity.EpisodeEntity;
+import com.thomas.video.entity.FollowEntity;
+import com.thomas.video.entity.HistoryEntity;
+import com.thomas.video.helper.ImageHelper;
+import com.thomas.video.helper.JsoupHelper;
+import com.thomas.video.widget.SuperVideo;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.simple.SimpleCallback;
+import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import org.litepal.LitePal;
+import org.litepal.crud.callback.UpdateOrDeleteCallback;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import butterknife.BindView;
+import cn.jzvd.JZMediaSystem;
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
+
+public class DetailActivity extends BaseActivity {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.tv_detail_alias)
+    AppCompatTextView tvDetailAlias;
+    @BindView(R.id.tv_detail_area)
+    AppCompatTextView tvDetailArea;
+    @BindView(R.id.tv_detail_language)
+    AppCompatTextView tvDetailLanguage;
+    @BindView(R.id.tv_detail_type)
+    AppCompatTextView tvDetailType;
+    @BindView(R.id.tv_detail_date)
+    AppCompatTextView tvDetailDate;
+    @BindView(R.id.tv_detail_time)
+    AppCompatTextView tvDetailTime;
+    @BindView(R.id.tv_detail_score)
+    AppCompatTextView tvDetailScore;
+    @BindView(R.id.tv_detail_director)
+    AppCompatTextView tvDetailDirector;
+    @BindView(R.id.tv_detail_stars)
+    AppCompatTextView tvDetailStars;
+    @BindView(R.id.tv_detail_introduction)
+    AppCompatTextView tvDetailIntroduction;
+    @BindView(R.id.rv_detail_episode)
+    RecyclerView rvDetailEpisode;
+    @BindView(R.id.video_player)
+    SuperVideo videoPlayer;
+    String title, url, id;
+
+    private boolean isFollow = false;
+
+    private BaseQuickAdapter<EpisodeEntity, BaseViewHolder> adapter;
+    private List<EpisodeEntity> datas = new ArrayList<>();
+    private VideoDetailBean resultBean;
+    private int currentEpisode = 0;
+
+    List<FollowEntity> db_datas;
+    List<HistoryEntity> db_history;
+    private int engine;
+
+    @Override
+    public boolean isNeedRegister() {
+        return false;
+    }
+
+    @Override
+    public void initData(@NonNull Bundle bundle) {
+        title = bundle.getString("title");
+        url = bundle.getString("url");
+        id = bundle.getString("id");
+    }
+
+    @Override
+    public int bindLayout() {
+        return R.layout.activity_detail;
+    }
+
+    @Override
+    public void initView(Bundle savedInstanceState, View contentView) {
+        toolbar.setTitle(title);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(true);
+        }
+        engine = SPUtils.getInstance("setting").getInt("engine", 0);
+
+        adapter = new BaseQuickAdapter<EpisodeEntity, BaseViewHolder>(R.layout.item_detail_episode, datas) {
+            @Override
+            protected void convert(BaseViewHolder helper, EpisodeEntity item) {
+                helper.setText(R.id.item_tv_name, item.getName());
+                if (currentEpisode == helper.getAdapterPosition()) {
+                    helper.getView(R.id.item_iv_play).setVisibility(View.VISIBLE);
+                } else {
+                    helper.getView(R.id.item_iv_play).setVisibility(View.GONE);
+                }
+            }
+        };
+        rvDetailEpisode.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        rvDetailEpisode.setAdapter(adapter);
+
+        adapter.setOnItemClickListener((adapter, view, position) -> {
+            currentEpisode = position;
+            if (isFollow) {
+                if (db_datas == null || db_datas.size() == 0) {
+                    db_datas = LitePal.where("videoId = ?", id).find(FollowEntity.class);
+                }
+                db_datas.get(0).setCurrentEpisode(currentEpisode);
+                db_datas.get(0).save();
+            }
+            adapter.notifyDataSetChanged();
+            rvDetailEpisode.scrollToPosition(currentEpisode);
+            setVideo(datas.get(position).getOnlineUrl(), title + " " + datas.get(position).getName());
+            videoPlayer.startVideo();
+        });
+
+        videoPlayer.setOnStartListener(() -> updateHistory());
+    }
+
+    private void updateHistory() {
+        HistoryEntity entity;
+        List<HistoryEntity> historyEntityList = LitePal.where("videoId = ?", id).find(HistoryEntity.class);
+        if (historyEntityList.size() > 0) {
+            entity = historyEntityList.get(0);
+        } else {
+            entity = new HistoryEntity();
+            entity.setVideoId(id);
+            entity.setImgUrl(resultBean.getImgUrl());
+            entity.setName(title);
+        }
+        entity.setCurrentName(datas.get(currentEpisode).getName());
+        entity.setCreateTime(TimeUtils.getNowString());
+        entity.setCurrentEpisode(currentEpisode);
+        entity.save();
+
+    }
+
+
+    private void setVideo(String onlineUrl, String title) {
+        if (engine == 0) {
+            videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
+        } else if (engine == 1) {
+            videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, IjkEngine.class);
+        } else if (engine == 2) {
+            videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, ExoEngine.class);
+        } else {
+            videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        return true;
+    }
+
+    /**更新菜单*/
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isFollow) {
+            menu.findItem(R.id.menu_follow).setTitle("取消关注");
+        } else {
+            menu.findItem(R.id.menu_follow).setTitle("添加关注");
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                ActivityUtils.finishActivity(mActivity, true);
+                break;
+            case R.id.menu_follow:
+                if (isFollow) {
+                    deleteFollow();
+                } else {
+                    addFollow();
+                }
+                break;
+            case R.id.menu_download:
+                showDownloadDialog();
+                break;
+            default:
+                    break;
+        }
+        return true;
+
+    }
+
+    private void showDownloadDialog() {
+        ToastUtils.showShort("即将上线");
+    }
+
+    /**
+     * 添加关注
+     */
+    private void addFollow() {
+        FollowEntity followEntity = new FollowEntity();
+        followEntity.setVideoId(id);
+        followEntity.setCreateTime(TimeUtils.getNowString());
+        followEntity.setName(title);
+        followEntity.setImgUrl(resultBean.getImgUrl());
+        followEntity.setCurrentEpisode(currentEpisode);
+        followEntity.saveAsync().listen(success -> {
+            if (success) {
+                isFollow = true;
+                updateState();
+            }
+        });
+    }
+
+    private void updateState() {
+        if (isFollow) {
+            ToastUtils.showShort("添加关注成功");
+        } else {
+            ToastUtils.showShort("取消关注成功");
+        }
+        invalidateOptionsMenu();
+    }
+
+    /**
+     * 取消关注
+     */
+    private void deleteFollow() {
+        LitePal.deleteAllAsync(FollowEntity.class, "videoId =?", id).listen(new UpdateOrDeleteCallback() {
+            @Override
+            public void onFinish(int rowsAffected) {
+                isFollow = false;
+                updateState();
+            }
+        });
+    }
+
+    @Override
+    public void doBusiness() {
+        getDetail();
+    }
+
+    private void getDetail() {
+        Kalle.get(ApiConstant.DETAIL_URL + url).perform(new SimpleCallback<String>() {
+
+            @Override
+            public void onStart() {
+                showLoading();
+            }
+
+            @Override
+            public void onResponse(SimpleResponse<String, String> response) {
+
+                resultBean = JsoupHelper.parseVideoDetail(response.succeed());
+                ImageHelper.displayExtraImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
+                tvDetailAlias.setText(resultBean.getAlias());
+                tvDetailArea.setText(resultBean.getArea());
+                tvDetailLanguage.setText(resultBean.getLanguage());
+                tvDetailType.setText(resultBean.getType());
+                tvDetailDate.setText(resultBean.getDate());
+                tvDetailTime.setText(resultBean.getTime());
+                tvDetailScore.setText(resultBean.getScore());
+                tvDetailDirector.setText(resultBean.getDirector());
+                tvDetailStars.setText(resultBean.getStars());
+                tvDetailIntroduction.setText(resultBean.getIntroduction());
+                datas.addAll(resultBean.getEpisodeList());
+                adapter.setNewData(datas);
+
+
+                db_datas = LitePal.where("videoId = ?", id).find(FollowEntity.class);
+                db_history = LitePal.where("videoId = ?", id).find(HistoryEntity.class);
+                isFollow = (db_datas != null && db_datas.size() > 0);
+                invalidateOptionsMenu();
+
+                if (db_history != null && db_history.size() > 0) {
+                    currentEpisode = db_history.get(0).getCurrentEpisode();
+                    adapter.notifyItemChanged(currentEpisode);
+                }
+                initCurrentEpisode();
+            }
+
+            @Override
+            public void onException(Exception e) {
+                ToastUtils.showShort("请求失败" + e.toString());
+            }
+
+            @Override
+            public void onEnd() {
+                hideLoading();
+            }
+        });
+    }
+
+    /**
+     * 设置当前观看的集数
+     */
+    private void initCurrentEpisode() {
+        rvDetailEpisode.scrollToPosition(currentEpisode);
+        setVideo(datas.get(currentEpisode).getOnlineUrl(), title + " " + datas.get(currentEpisode).getName());
+    }
+
+    @Override
+    public void onDebouncingClick(View view) {
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Jzvd.releaseAllVideos();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Jzvd.backPress()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">够看影视</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">够 看 影 视</string>
+    <string name="nav_header_subtitle">丰 富 你 的 生 活</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_search">够看搜索</string>
+    <string name="menu_follow">我的关注</string>
+    <string name="menu_history">历史记录</string>
+    <string name="menu_download">下载管理</string>
+    <string name="menu_share">应用推荐</string>
+    <string name="menu_setting">设置中心</string>
+    <string name="menu_about">关于我们</string>
+</resources>
