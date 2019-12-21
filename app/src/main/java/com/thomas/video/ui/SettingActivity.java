@@ -13,6 +13,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.CleanUtils;
+import com.blankj.utilcode.util.FileUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
@@ -87,18 +89,17 @@ public class SettingActivity extends BaseActivity {
         } else if (clickId == R.id.tv_change_home) {
             showHomeDialog();
         } else if (clickId == R.id.tv_clean) {
+          String size =  FileUtils.getSize(PathUtils.getInternalAppCachePath());
+
             showLoading("清理中。。。");
             Utils.runOnUiThreadDelayed(new Runnable() {
                 @Override
                 public void run() {
                     CleanUtils.cleanInternalCache();
-                    CleanUtils.cleanInternalSp();
-                    CleanUtils.cleanInternalDbs();
-                    CleanUtils.cleanInternalFiles();
-                    ToastUtils.showShort("清理完成");
+                    ToastUtils.showShort("清理了"+size+"的缓存");
                     hideLoading();
                 }
-            }, 5000);
+            }, 3000);
 
         } else {
             ToastUtils.showShort("即将上线");

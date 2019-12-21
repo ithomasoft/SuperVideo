@@ -37,9 +37,7 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 import org.litepal.LitePal;
 import org.litepal.crud.callback.UpdateOrDeleteCallback;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -223,6 +221,7 @@ public class DetailActivity extends BaseActivity {
 
     private void showDownloadDialog() {
         ToastUtils.showShort("即将上线");
+
     }
 
     /**

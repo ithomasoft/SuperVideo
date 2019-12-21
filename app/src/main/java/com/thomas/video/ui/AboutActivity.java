@@ -19,7 +19,6 @@ import com.thomas.video.R;
 import com.thomas.video.base.BaseActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class AboutActivity extends BaseActivity {
 
