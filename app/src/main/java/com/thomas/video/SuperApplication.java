@@ -6,9 +6,6 @@ import com.blankj.utilcode.util.CrashUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.ProcessUtils;
-import com.didichuxing.doraemonkit.DoraemonKit;
-import com.liulishuo.filedownloader.FileDownloader;
-import com.liulishuo.filedownloader.connection.FileDownloadUrlConnection;
 import com.tencent.bugly.Bugly;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
@@ -48,7 +45,7 @@ public class SuperApplication extends MultiDexApplication {
 
 
     private void initLog() {
-        DoraemonKit.install(this);
+//        DoraemonKit.install(this);
         final LogUtils.Config config = LogUtils.getConfig()
                 // 设置 log 总开关，包括输出到控制台和文件，默认开
                 .setLogSwitch(BuildConfig.DEBUG)
@@ -116,13 +113,7 @@ public class SuperApplication extends MultiDexApplication {
         //初始数据库框架
         LitePal.initialize(this);
         //初始化下载器框架
-        FileDownloader.setupOnApplicationOnCreate(this)
-        .connectionCreator(new FileDownloadUrlConnection
-                .Creator(new FileDownloadUrlConnection
-                .Configuration()
-                .connectTimeout(15000)
-                .readTimeout(15000)
-        )).commit();
+
     }
 
 

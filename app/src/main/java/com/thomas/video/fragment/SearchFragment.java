@@ -52,7 +52,7 @@ public class SearchFragment extends BaseFragment {
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
         applyDebouncingClickListener(ivSearch);
-        ClickUtils.applyScale(ivSearch);
+        ClickUtils.applyPressedViewScale(ivSearch);
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 

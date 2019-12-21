@@ -63,7 +63,7 @@ public class FollowFragment extends BaseFragment {
         adapter = new BaseQuickAdapter<FollowEntity, BaseViewHolder>(R.layout.item_follow, datas) {
             @Override
             protected void convert(BaseViewHolder helper, FollowEntity item) {
-                ClickUtils.applyScale(helper.itemView);
+                ClickUtils.applyPressedViewScale(helper.itemView);
                 helper.setText(R.id.item_tv_name, item.getName());
                 ImageHelper.displayContentImage(helper.getView(R.id.item_iv_video), item.getImgUrl());
             }

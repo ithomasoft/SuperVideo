@@ -66,7 +66,7 @@ public class HistoryFragment extends BaseFragment {
                 helper.setText(R.id.item_tv_current_name, "当前观看到：" + item.getCurrentName());
                 helper.setText(R.id.item_tv_time, item.getCreateTime());
                 ImageHelper.displayExtraImage(helper.getView(R.id.item_iv_video), item.getImgUrl());
-                ClickUtils.applyScale(helper.getView(R.id.item_iv_delete));
+                ClickUtils.applyPressedViewScale(helper.getView(R.id.item_iv_delete));
                 helper.addOnClickListener(R.id.item_iv_delete);
             }
         };

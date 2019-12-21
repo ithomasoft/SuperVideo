@@ -113,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IBaseVie
 
     public void applyDebouncingClickListener(View... views) {
         ClickUtils.applyGlobalDebouncing(views, mClickListener);
-        ClickUtils.applyScale(views);
+        ClickUtils.applyPressedViewScale(views);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)

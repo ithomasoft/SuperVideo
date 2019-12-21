@@ -337,6 +337,18 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        Jzvd.goOnPlayOnPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Jzvd.goOnPlayOnResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         Jzvd.releaseAllVideos();
     }
 

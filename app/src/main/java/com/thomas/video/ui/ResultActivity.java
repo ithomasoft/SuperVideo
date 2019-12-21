@@ -80,7 +80,7 @@ public class ResultActivity extends BaseActivity {
         adapter = new BaseQuickAdapter<SearchResultBean.DataBean, BaseViewHolder>(R.layout.item_search_result, datas) {
             @Override
             protected void convert(BaseViewHolder helper, SearchResultBean.DataBean item) {
-                ClickUtils.applyScale(helper.itemView);
+                ClickUtils.applyPressedViewScale(helper.itemView);
                 helper.setText(R.id.item_tv_name, item.getName());
                 helper.setText(R.id.item_tv_type, item.getType());
                 helper.setText(R.id.item_tv_time, "更新时间：" + item.getUpdateTime());

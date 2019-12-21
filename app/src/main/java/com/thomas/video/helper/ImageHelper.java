@@ -18,7 +18,6 @@ public class ImageHelper {
     public static void displayImage(ImageView imageView, String url) {
         RequestOptions requestOptions = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .priority(Priority.HIGH);
         Glide.with(imageView.getContext())
                 .load(url).apply(requestOptions)
@@ -29,7 +28,6 @@ public class ImageHelper {
     public static void displayExtraImage(ImageView imageView, String url) {
         RequestOptions requestOptions = new RequestOptions()
                 .centerInside()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .priority(Priority.NORMAL);
         Glide.with(imageView.getContext())
                 .load(url).apply(requestOptions)
@@ -40,7 +38,6 @@ public class ImageHelper {
     public static void displayContentImage(ImageView imageView, String url) {
         RequestOptions requestOptions = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .placeholder(R.drawable.splash_logo)
                 .priority(Priority.NORMAL);
         Glide.with(imageView.getContext())
