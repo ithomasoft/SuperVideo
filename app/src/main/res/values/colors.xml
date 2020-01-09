@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#008577</color>
-    <color name="colorAccent">#008577</color>
-
     <color name="black_overlay">#66000000</color>
+    <color name="colorPrimary">@android:color/holo_blue_light</color>
+    <color name="colorPrimaryDark">@android:color/holo_blue_light</color>
+    <color name="colorAccent">@android:color/holo_blue_light</color>
+    <color name="thomas_color_app_background">#F3F3F3</color>
+    <color name="thomas_color_normal_text">#333333</color>
+    <color name="thomas_color_hint_text">#777777</color>
+    <color name="thomas_color_driver">#DCDCDC</color>
+    <color name="thomas_color_app_title_text">#FFFFFF</color>
+    <color name="thomas_color_app_title_background">@color/colorAccent</color>
+
+
 </resources>

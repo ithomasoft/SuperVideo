@@ -9,11 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.BarUtils;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.BarUtils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.base.ThomasActivity;
 import com.thomas.video.helper.ImageHelper;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.simple.SimpleCallback;
@@ -29,7 +29,7 @@ import butterknife.BindView;
  * @date 2019/6/26
  * @updatelog
  */
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends ThomasActivity {
 
     @BindView(R.id.iv_splash)
     ImageView ivSplash;
@@ -55,6 +55,12 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
+
+    }
+
+    @Override
+    public void initStatusBar() {
+        super.initStatusBar();
         BarUtils.setStatusBarVisibility(this, false);
         BarUtils.setNavBarVisibility(this, false);
     }
@@ -96,8 +102,4 @@ public class SplashActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void onDebouncingClick(View view) {
-
-    }
 }

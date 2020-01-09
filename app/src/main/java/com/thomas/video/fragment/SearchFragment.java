@@ -9,17 +9,12 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ClickUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.thomas.video.ApiConstant;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.KeyboardUtils;
+import com.thomas.core.utils.ToastUtils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseFragment;
+import com.thomas.video.base.LazyThomasFragment;
 import com.thomas.video.ui.ResultActivity;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import butterknife.BindView;
 
@@ -28,7 +23,7 @@ import butterknife.BindView;
  * @date 2019/6/27
  * @updatelog
  */
-public class SearchFragment extends BaseFragment {
+public class SearchFragment extends LazyThomasFragment {
     @BindView(R.id.et_search)
     EditText etSearch;
     @BindView(R.id.iv_search)
@@ -51,11 +46,8 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
-        applyDebouncingClickListener(ivSearch);
-        ClickUtils.applyPressedViewScale(ivSearch);
         etSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
                 toResult();
                 return true;
             } else {
@@ -65,17 +57,9 @@ public class SearchFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void doBusiness() {
-        Kalle.get(ApiConstant.Source.HOME_URL).perform(new SimpleCallback<String>() {
-            @Override
-            public void onResponse(SimpleResponse<String, String> response) {
-            }
-        });
-    }
 
     @Override
-    public void onDebouncingClick(View view) {
+    public void onThomasClick(@NonNull View view) {
         int clickId = view.getId();
         if (clickId == R.id.iv_search) {
             toResult();

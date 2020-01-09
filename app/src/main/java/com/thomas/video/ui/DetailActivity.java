@@ -9,18 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.TimeUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.thomas.video.ApiConstant;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.SPUtils;
+import com.thomas.core.utils.TimeUtils;
+import com.thomas.core.utils.ToastUtils;
+import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.base.ThomasMvpActivity;
 import com.thomas.video.bean.VideoDetailBean;
 import com.thomas.video.engine.ExoEngine;
 import com.thomas.video.engine.IjkEngine;
@@ -28,11 +29,10 @@ import com.thomas.video.entity.EpisodeEntity;
 import com.thomas.video.entity.FollowEntity;
 import com.thomas.video.entity.HistoryEntity;
 import com.thomas.video.helper.ImageHelper;
-import com.thomas.video.helper.JsoupHelper;
+import com.thomas.video.helper.StatusHelper;
+import com.thomas.video.ui.contract.DetailContract;
+import com.thomas.video.ui.presenter.DetailPresenter;
 import com.thomas.video.widget.SuperVideo;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.litepal.LitePal;
 import org.litepal.crud.callback.UpdateOrDeleteCallback;
@@ -45,7 +45,7 @@ import cn.jzvd.JZMediaSystem;
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
 
-public class DetailActivity extends BaseActivity {
+public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implements DetailContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -74,6 +74,8 @@ public class DetailActivity extends BaseActivity {
     @BindView(R.id.video_player)
     SuperVideo videoPlayer;
     String title, url, id;
+    @BindView(R.id.root_detail)
+    ConstraintLayout rootDetail;
 
     private boolean isFollow = false;
 
@@ -85,6 +87,11 @@ public class DetailActivity extends BaseActivity {
     List<FollowEntity> db_datas;
     List<HistoryEntity> db_history;
     private int engine;
+
+    @Override
+    protected DetailPresenter createPresenter() {
+        return new DetailPresenter();
+    }
 
     @Override
     public boolean isNeedRegister() {
@@ -112,6 +119,17 @@ public class DetailActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+
+        if (holder==null){
+            holder = StatusHelper.getDefault().wrap(rootDetail).withRetry(new Runnable() {
+                @Override
+                public void run() {
+                    holder.showLoading();
+                    presenter.getData(url);
+                }
+            });
+        }
+
         engine = SPUtils.getInstance("setting").getInt("engine", 0);
 
         adapter = new BaseQuickAdapter<EpisodeEntity, BaseViewHolder>(R.layout.item_detail_episode, datas) {
@@ -271,58 +289,13 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     public void doBusiness() {
-        getDetail();
-    }
-
-    private void getDetail() {
-        Kalle.get(ApiConstant.DETAIL_URL + url).perform(new SimpleCallback<String>() {
-
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(new Runnable() {
             @Override
-            public void onStart() {
-                showLoading();
+            public void run() {
+                presenter.getData(url);
             }
-
-            @Override
-            public void onResponse(SimpleResponse<String, String> response) {
-
-                resultBean = JsoupHelper.parseVideoDetail(response.succeed());
-                ImageHelper.displayImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
-                tvDetailAlias.setText(resultBean.getAlias());
-                tvDetailArea.setText(resultBean.getArea());
-                tvDetailLanguage.setText(resultBean.getLanguage());
-                tvDetailType.setText(resultBean.getType());
-                tvDetailDate.setText(resultBean.getDate());
-                tvDetailTime.setText(resultBean.getTime());
-                tvDetailScore.setText(resultBean.getScore());
-                tvDetailDirector.setText(resultBean.getDirector());
-                tvDetailStars.setText(resultBean.getStars());
-                tvDetailIntroduction.setText(resultBean.getIntroduction());
-                datas.addAll(resultBean.getEpisodeList());
-                adapter.setNewData(datas);
-
-
-                db_datas = LitePal.where("videoId = ?", id).find(FollowEntity.class);
-                db_history = LitePal.where("videoId = ?", id).find(HistoryEntity.class);
-                isFollow = (db_datas != null && db_datas.size() > 0);
-                invalidateOptionsMenu();
-
-                if (db_history != null && db_history.size() > 0) {
-                    currentEpisode = db_history.get(0).getCurrentEpisode();
-                    adapter.notifyItemChanged(currentEpisode);
-                }
-                initCurrentEpisode();
-            }
-
-            @Override
-            public void onException(Exception e) {
-                ToastUtils.showShort("请求失败" + e.toString());
-            }
-
-            @Override
-            public void onEnd() {
-                hideLoading();
-            }
-        });
+        },1500);
     }
 
     /**
@@ -331,10 +304,6 @@ public class DetailActivity extends BaseActivity {
     private void initCurrentEpisode() {
         rvDetailEpisode.scrollToPosition(currentEpisode);
         setVideo(datas.get(currentEpisode).getOnlineUrl(), title + " " + datas.get(currentEpisode).getName());
-    }
-
-    @Override
-    public void onDebouncingClick(View view) {
     }
 
 
@@ -356,11 +325,49 @@ public class DetailActivity extends BaseActivity {
         Jzvd.releaseAllVideos();
     }
 
+
     @Override
     public void onBackPressed() {
         if (Jzvd.backPress()) {
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public void onFailed(String failed) {
+holder.withData(failed).showLoadFailed();
+    }
+
+
+    @Override
+    public void getDataSuccess(VideoDetailBean succeed) {
+        holder.showLoadSuccess();
+        resultBean = succeed;
+        ImageHelper.displayImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
+        tvDetailAlias.setText(resultBean.getAlias());
+        tvDetailArea.setText(resultBean.getArea());
+        tvDetailLanguage.setText(resultBean.getLanguage());
+        tvDetailType.setText(resultBean.getType());
+        tvDetailDate.setText(resultBean.getDate());
+        tvDetailTime.setText(resultBean.getTime());
+        tvDetailScore.setText(resultBean.getScore());
+        tvDetailDirector.setText(resultBean.getDirector());
+        tvDetailStars.setText(resultBean.getStars());
+        tvDetailIntroduction.setText(resultBean.getIntroduction());
+        datas.addAll(resultBean.getEpisodeList());
+        adapter.setNewData(datas);
+
+
+        db_datas = LitePal.where("videoId = ?", id).find(FollowEntity.class);
+        db_history = LitePal.where("videoId = ?", id).find(HistoryEntity.class);
+        isFollow = (db_datas != null && db_datas.size() > 0);
+        invalidateOptionsMenu();
+
+        if (db_history != null && db_history.size() > 0) {
+            currentEpisode = db_history.get(0).getCurrentEpisode();
+            adapter.notifyItemChanged(currentEpisode);
+        }
+        initCurrentEpisode();
     }
 }

@@ -10,38 +10,44 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ClickUtils;
-import com.blankj.utilcode.util.EncodeUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.thomas.video.ApiConstant;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.ToastUtils;
+import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.adapter.ResultAdapter;
+import com.thomas.video.base.ThomasMvpActivity;
 import com.thomas.video.bean.SearchResultBean;
-import com.thomas.video.helper.JsoupHelper;
-import com.thomas.video.widget.EmptyView;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
+import com.thomas.video.helper.StatusHelper;
+import com.thomas.video.ui.contract.ResultContract;
+import com.thomas.video.ui.presenter.ResultPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 
-public class ResultActivity extends BaseActivity {
+public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implements ResultContract.View {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.rv_content)
+    RecyclerView rvContent;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
     private String key;
     private int currentPage = 1;
     private boolean isLoad = false;
 
-    private BaseQuickAdapter<SearchResultBean.DataBean, BaseViewHolder> adapter;
+    private ResultAdapter adapter;
     private List<SearchResultBean.DataBean> datas = new ArrayList<>();
+
+    @Override
+    protected ResultPresenter createPresenter() {
+        return new ResultPresenter();
+    }
 
     @Override
     public boolean isNeedRegister() {
@@ -69,26 +75,37 @@ public class ResultActivity extends BaseActivity {
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
-        adapter = new BaseQuickAdapter<SearchResultBean.DataBean, BaseViewHolder>(R.layout.item_search_result, datas) {
+        if (holder == null) {
+            holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
+                holder.showLoading();
+                Utils.runOnUiThreadDelayed(() -> {
+                    currentPage = 1;
+                    datas.clear();
+                    presenter.getData(currentPage, key);
+                }, 1500);
+            });
+        }
+
+        smartRefreshLayout.setOnRefreshLoadMoreListener(new OnRefreshLoadMoreListener() {
             @Override
-            protected void convert(BaseViewHolder helper, SearchResultBean.DataBean item) {
-                ClickUtils.applyPressedViewScale(helper.itemView);
-                helper.setText(R.id.item_tv_name, item.getName());
-                helper.setText(R.id.item_tv_type, item.getType());
-                helper.setText(R.id.item_tv_time, "更新时间：" + item.getUpdateTime());
-                helper.setText(R.id.item_tv_sharp, item.getSharp());
-                helper.setText(R.id.item_tv_last, item.getLast().equals("完结") ? item.getLast() : ("更新至：" + item.getLast()));
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                currentPage++;
+                presenter.getData(currentPage, key);
             }
-        };
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                currentPage = 1;
+                datas.clear();
+                presenter.getData(currentPage, key);
+            }
+        });
+
+        adapter = new ResultAdapter(datas);
+        rvContent.setLayoutManager(new LinearLayoutManager(this));
+        rvContent.setAdapter(adapter);
         adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
-        adapter.setOnLoadMoreListener(() -> {
-            currentPage++;
-            isLoad = true;
-            getResult();
-        }, recyclerView);
+        adapter.disableLoadMoreIfNotFullPage(rvContent);
 
         adapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
@@ -103,7 +120,7 @@ public class ResultActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            ActivityUtils.finishActivity(mActivity, true);
+            ActivityUtils.finishActivity(mActivity);
         }
         return true;
 
@@ -111,58 +128,42 @@ public class ResultActivity extends BaseActivity {
 
     @Override
     public void doBusiness() {
-        getResult();
-    }
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(new Runnable() {
+            @Override
+            public void run() {
+                presenter.getData(currentPage, key);
+            }
+        },1500);
 
-    private void getResult() {
-        String realKey = EncodeUtils.urlEncode(key);
-        Kalle.get(ApiConstant.Search.SEARCH_URL + currentPage + ApiConstant.SEARCH_KEY + realKey + ApiConstant.END_URL)
-                .perform(new SimpleCallback<String>() {
-
-                    @Override
-                    public void onStart() {
-                        if (!isLoad) {
-                            showLoading();
-                        }
-                    }
-
-                    @Override
-                    public void onResponse(SimpleResponse<String, String> response) {
-                        SearchResultBean resultBean = JsoupHelper.parseSearchResult(response.succeed());
-                        adapter.loadMoreComplete();
-                        if (resultBean.getPage().getPageindex() < resultBean.getPage().getPagecount()) {
-                            //可以加载更多
-                            adapter.setEnableLoadMore(true);
-                        } else {
-                            adapter.setEnableLoadMore(false);
-                            //已经加载完了
-                            adapter.loadMoreEnd(false);
-                        }
-                        adapter.addData(resultBean.getData());
-
-                        if (adapter.getData().size() == 0) {
-                            EmptyView emptyView = new EmptyView(mActivity);
-                            emptyView.setInfo("暂无结果", "换个关键词试试？");
-                            adapter.setEmptyView(emptyView);
-                        }
-                    }
-
-                    @Override
-                    public void onException(Exception e) {
-                        EmptyView emptyView = new EmptyView(mActivity);
-                        emptyView.setInfo("请求失败", e.toString());
-                        adapter.setEmptyView(emptyView);
-                    }
-
-                    @Override
-                    public void onEnd() {
-                        hideLoading();
-                    }
-                });
     }
 
     @Override
-    public void onDebouncingClick(View view) {
+    public void onFailed(String failed) {
+        smartRefreshLayout.finishRefresh(false);
+        smartRefreshLayout.finishLoadMore(false);
+        if (currentPage == 1) {
+            holder.withData(failed).showLoadFailed();
+        } else {
+            ToastUtils.showShort(failed);
+        }
+    }
 
+    @Override
+    public void getDataSuccess(List<SearchResultBean.DataBean> succeed) {
+        holder.showLoadSuccess();
+        adapter.addData(succeed);
+    }
+
+    @Override
+    public void getDataEmpty() {
+        holder.withData("换个关键词试试？").showEmpty();
+    }
+
+    @Override
+    public void hasMoreData(boolean hasMoreData) {
+        smartRefreshLayout.finishRefresh(true);
+        smartRefreshLayout.finishLoadMore(true);
+        smartRefreshLayout.setNoMoreData(!hasMoreData);
     }
 }

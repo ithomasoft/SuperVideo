@@ -4,24 +4,23 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ClickUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.Utils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseFragment;
+import com.thomas.video.adapter.HistoryAdapter;
+import com.thomas.video.base.LazyThomasMvpFragment;
 import com.thomas.video.entity.HistoryEntity;
-import com.thomas.video.helper.ImageHelper;
+import com.thomas.video.fragment.contract.HistoryContract;
+import com.thomas.video.fragment.presenter.HistoryPresenter;
+import com.thomas.video.helper.DialogHelper;
+import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.DetailActivity;
-import com.thomas.video.widget.EmptyView;
-
-import org.litepal.LitePal;
-import org.litepal.crud.callback.UpdateOrDeleteCallback;
+import com.thomas.video.widget.NormalDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +32,15 @@ import butterknife.BindView;
  * @date 2019/6/27
  * @updatelog
  */
-public class HistoryFragment extends BaseFragment {
+public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> implements HistoryContract.View {
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.rv_content)
+    RecyclerView rvContent;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
-    private BaseQuickAdapter<HistoryEntity, BaseViewHolder> adapter;
+    private HistoryAdapter adapter;
     private List<HistoryEntity> datas = new ArrayList<>();
-
 
     @Override
     public boolean isNeedRegister() {
@@ -59,21 +59,17 @@ public class HistoryFragment extends BaseFragment {
 
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
-        adapter = new BaseQuickAdapter<HistoryEntity, BaseViewHolder>(R.layout.item_history, datas) {
-            @Override
-            protected void convert(BaseViewHolder helper, HistoryEntity item) {
-                helper.setText(R.id.item_tv_name, item.getName());
-                helper.setText(R.id.item_tv_current_name, "当前观看到：" + item.getCurrentName());
-                helper.setText(R.id.item_tv_time, item.getCreateTime());
-                ImageHelper.displayExtraImage(helper.getView(R.id.item_iv_video), item.getImgUrl());
-                ClickUtils.applyPressedViewScale(helper.getView(R.id.item_iv_delete));
-                helper.addOnClickListener(R.id.item_iv_delete);
-            }
-        };
-        recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        recyclerView.setAdapter(adapter);
-        adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
+        if (holder == null) {
+            holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
+                holder.showLoading();
+                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1500);
+            });
+        }
+
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> presenter.getData());
+        adapter = new HistoryAdapter(datas);
+        rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
+        rvContent.setAdapter(adapter);
         adapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
             bundle.putString("title", datas.get(position).getName());
@@ -82,65 +78,76 @@ public class HistoryFragment extends BaseFragment {
             ActivityUtils.startActivity(bundle, DetailActivity.class);
         });
         adapter.setOnItemChildClickListener((adapter, view, position) -> {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-            builder.setMessage("真的要删除“ " + datas.get(position).getName() + " ”的记录吗?")
-                    .setTitle("提示")
-                    .setPositiveButton("删除记录", (dialog, which) -> deleteHistory(position))
-                    .setNegativeButton("再想想", (dialog, which) -> dialog.dismiss()).create().show();
-
+            showTips(position);
         });
     }
 
-    @Override
-    public void doBusiness() {
-        LitePal.order("createTime desc").findAsync(HistoryEntity.class).listen(list -> {
-            datas.clear();
-            datas.addAll(list);
-            if (datas.size() == 0) {
-                EmptyView emptyView = new EmptyView(mActivity);
-                emptyView.setInfo("什么都没有", "快去观看你感兴趣的影片吧！");
-                adapter.setEmptyView(emptyView);
-            } else {
-                adapter.setNewData(datas);
-            }
+    private void showTips(int position) {
+        DialogHelper.showDialogCenter("提示", "真的要删除“ " + datas.get(position).getName() + " ”的记录吗?",
+                "再想想", "删除记录", new NormalDialog.OnDialogListener() {
+                    @Override
+                    public void onCancel() {
 
-        });
+                    }
+
+                    @Override
+                    public void onSure() {
+                        deleteHistory(position);
+                    }
+                });
+    }
+
+
+    @Override
+    protected void onFirstUserVisible() {
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(new Runnable() {
+            @Override
+            public void run() {
+                presenter.getData();
+            }
+        }, 1500);
+
+    }
+
+    @Override
+    protected void onUserVisible() {
+        super.onUserVisible();
+        presenter.getData();
     }
 
     private void deleteHistory(int position) {
-        LitePal.deleteAllAsync(HistoryEntity.class, "videoId =?", datas.get(position).getVideoId()).listen(new UpdateOrDeleteCallback() {
-            @Override
-            public void onFinish(int rowsAffected) {
-                adapter.remove(position);
-                if (adapter.getData().size() == 0) {
-                    EmptyView emptyView = new EmptyView(mActivity);
-                    emptyView.setInfo("什么都没有", "快去关注你感兴趣的影片吧！");
-                    adapter.setEmptyView(emptyView);
-                }
-            }
-        });
+        presenter.deleteHistory(position, datas.get(position).getVideoId());
+    }
+
+
+    @Override
+    protected HistoryPresenter createPresenter() {
+        return new HistoryPresenter();
     }
 
     @Override
-    public void onDebouncingClick(View view) {
-
+    public void onFailed(String failed) {
+        smartRefreshLayout.finishRefresh(false);
+        holder.withData(failed).showLoadFailed();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        LitePal.order("createTime desc").findAsync(HistoryEntity.class).listen(list -> {
-            datas.clear();
-            datas.addAll(list);
-            if (datas.size() == 0) {
-                EmptyView emptyView = new EmptyView(mActivity);
-                emptyView.setInfo("什么都没有", "快去观看你感兴趣的影片吧！");
-                adapter.setEmptyView(emptyView);
-            } else {
-                adapter.setNewData(datas);
-            }
+    public void getDataSuccess(List<HistoryEntity> succeed) {
+        smartRefreshLayout.finishRefresh(true);
+        holder.showLoadSuccess();
+        datas.addAll(succeed);
+        adapter.setNewData(datas);
+    }
 
-        });
+    @Override
+    public void getDataEmpty() {
+        smartRefreshLayout.finishRefresh(true);
+        holder.withData("快去观看你感兴趣的影片吧！").showEmpty();
+    }
+
+    @Override
+    public void deleteSuccess(int position) {
+        adapter.remove(position);
     }
 }

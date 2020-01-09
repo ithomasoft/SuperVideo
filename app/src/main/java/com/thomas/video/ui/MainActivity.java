@@ -14,31 +14,31 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
-import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.navigation.NavigationView;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.AppUtils;
+import com.thomas.core.utils.KeyboardUtils;
+import com.thomas.core.utils.SPUtils;
+import com.thomas.core.utils.StringUtils;
+import com.thomas.core.utils.ToastUtils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
-import com.thomas.video.base.BaseFragment;
+import com.thomas.video.base.LazyThomasFragment;
+import com.thomas.video.base.ThomasActivity;
 import com.thomas.video.fragment.DownloadFragment;
 import com.thomas.video.fragment.FollowFragment;
 import com.thomas.video.fragment.HistoryFragment;
 import com.thomas.video.fragment.SearchFragment;
-import com.thomas.video.widget.NoScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 
-import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-public class MainActivity extends BaseActivity
+public class MainActivity extends ThomasActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
@@ -48,11 +48,10 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
     @BindView(R.id.home_container)
-    NoScrollViewPager homeContainer;
+    ViewPager2 homeContainer;
 
-    private List<BaseFragment> mFragments = new ArrayList<>();
+    private List<LazyThomasFragment> mFragments = new ArrayList<>();
     private int homeId;
-    private FragmentPagerAdapter adapter;
 
     @Override
     public void onBackPressed() {
@@ -72,16 +71,16 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_home) {
             showCurrentFragment(0);
-            toolbar.setTitle(getString(R.string.menu_search));
+            toolbar.setTitle(StringUtils.getString(R.string.menu_search));
         } else if (id == R.id.nav_follow) {
             showCurrentFragment(1);
-            toolbar.setTitle(getString(R.string.menu_follow));
+            toolbar.setTitle(StringUtils.getString(R.string.menu_follow));
         } else if (id == R.id.nav_history) {
             showCurrentFragment(2);
-            toolbar.setTitle(getString(R.string.menu_history));
+            toolbar.setTitle(StringUtils.getString(R.string.menu_history));
         } else if (id == R.id.nav_download) {
             showCurrentFragment(3);
-            toolbar.setTitle(getString(R.string.menu_download));
+            toolbar.setTitle(StringUtils.getString(R.string.menu_download));
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_setting) {
@@ -127,7 +126,6 @@ public class MainActivity extends BaseActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(homeId).setChecked(true);
-        homeContainer.setScroll(false);
     }
 
     @Override
@@ -136,26 +134,22 @@ public class MainActivity extends BaseActivity
         mFragments.add(new FollowFragment());
         mFragments.add(new HistoryFragment());
         mFragments.add(new DownloadFragment());
-        adapter = new FragmentPagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        homeContainer.setAdapter(new FragmentStateAdapter(mActivity) {
             @NonNull
             @Override
-            public Fragment getItem(int position) {
+            public Fragment createFragment(int position) {
                 return mFragments.get(position);
             }
 
             @Override
-            public int getCount() {
+            public int getItemCount() {
                 return mFragments.size();
             }
-        };
-        homeContainer.setAdapter(adapter);
+        });
+        homeContainer.setUserInputEnabled(false);
         homeContainer.setOffscreenPageLimit(mFragments.size());
     }
 
-    @Override
-    public void onDebouncingClick(View view) {
-
-    }
 
     private void showCurrentFragment(int index) {
         new Handler().postDelayed(() -> homeContainer.setCurrentItem(index, false), 250);

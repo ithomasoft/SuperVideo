@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="48dp"
+    android:background="@drawable/thomas_shape_r8_white"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_dialog_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|left"
+        android:padding="16dp"
+        android:lineSpacingExtra="3dp"
+        android:lineSpacingMultiplier="1.2"
+        android:textColor="@color/thomas_color_hint_text"
+        android:textSize="12dp" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/btn_dialog_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/thomas_bg_item_r8_selector"
+        android:clickable="true"
+        android:padding="16dp"
+        android:text="确定"
+        android:textColor="@color/thomas_color_app_title_background"
+        android:textSize="14dp" />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

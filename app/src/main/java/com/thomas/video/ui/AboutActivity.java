@@ -11,19 +11,19 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.IntentUtils;
-import com.blankj.utilcode.util.TimeUtils;
 import com.tencent.bugly.beta.Beta;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.AppUtils;
+import com.thomas.core.utils.IntentUtils;
+import com.thomas.core.utils.TimeUtils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.base.ThomasActivity;
 
 import java.util.Date;
 
 import butterknife.BindView;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends ThomasActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -66,16 +66,16 @@ public class AboutActivity extends BaseActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
-        tvVersion.setText("V"+AppUtils.getAppVersionName());
+        tvVersion.setText("V"+ AppUtils.getAppVersionName());
         tvCopyright.setText("Copyright ©"+ TimeUtils.date2String(new Date(),"yyyy")
                 +" All Rights Reserved www.okzyw.com");
-        applyDebouncingClickListener(tvCheck, tvFeedback, tvOpen, tvShare);
+        applyThomasClickListener(tvCheck, tvFeedback, tvOpen, tvShare);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            ActivityUtils.finishActivity(mActivity, true);
+            ActivityUtils.finishActivity(mActivity);
         }
         return true;
 
@@ -87,7 +87,7 @@ public class AboutActivity extends BaseActivity {
     }
 
     @Override
-    public void onDebouncingClick(View view) {
+    public void onThomasClick(@NonNull View view) {
         int viewId = view.getId();
         if (viewId == R.id.tv_check) {
             Beta.checkUpgrade();

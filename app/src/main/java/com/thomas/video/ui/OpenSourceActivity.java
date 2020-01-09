@@ -14,11 +14,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.thomas.core.utils.ActivityUtils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.base.ThomasActivity;
 import com.thomas.video.bean.OpenSourceBean;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 
-public class OpenSourceActivity extends BaseActivity {
+public class OpenSourceActivity extends ThomasActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -111,14 +111,10 @@ public class OpenSourceActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            ActivityUtils.finishActivity(mActivity, true);
+            ActivityUtils.finishActivity(mActivity);
         }
         return true;
 
     }
 
-    @Override
-    public void onDebouncingClick(View view) {
-
-    }
 }

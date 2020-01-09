@@ -4,25 +4,23 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ClickUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.Utils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseFragment;
+import com.thomas.video.adapter.FollowAdapter;
+import com.thomas.video.base.LazyThomasMvpFragment;
 import com.thomas.video.entity.FollowEntity;
-import com.thomas.video.helper.ImageHelper;
+import com.thomas.video.fragment.contract.FollowContract;
+import com.thomas.video.fragment.presenter.FollowPresenter;
+import com.thomas.video.helper.DialogHelper;
+import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.DetailActivity;
-import com.thomas.video.widget.EmptyView;
-
-import org.litepal.LitePal;
-import org.litepal.crud.callback.UpdateOrDeleteCallback;
+import com.thomas.video.widget.NormalDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +32,21 @@ import butterknife.BindView;
  * @date 2019/6/27
  * @updatelog
  */
-public class FollowFragment extends BaseFragment {
+public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> implements FollowContract.View {
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.rv_content)
+    RecyclerView rvContent;
+    @BindView(R.id.smart_refresh_layout)
+    SmartRefreshLayout smartRefreshLayout;
 
 
-    private BaseQuickAdapter<FollowEntity, BaseViewHolder> adapter;
+    private FollowAdapter adapter;
     private List<FollowEntity> datas = new ArrayList<>();
+
+    @Override
+    protected FollowPresenter createPresenter() {
+        return new FollowPresenter();
+    }
 
     @Override
     public boolean isNeedRegister() {
@@ -60,18 +65,20 @@ public class FollowFragment extends BaseFragment {
 
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
-        adapter = new BaseQuickAdapter<FollowEntity, BaseViewHolder>(R.layout.item_follow, datas) {
-            @Override
-            protected void convert(BaseViewHolder helper, FollowEntity item) {
-                ClickUtils.applyPressedViewScale(helper.itemView);
-                helper.setText(R.id.item_tv_name, item.getName());
-                ImageHelper.displayContentImage(helper.getView(R.id.item_iv_video), item.getImgUrl());
-            }
-        };
-        recyclerView.setLayoutManager(new GridLayoutManager(mActivity, 2));
-        recyclerView.setAdapter(adapter);
+        if (holder == null) {
+            holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
+                holder.showLoading();
+                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1500);
+            });
+        }
+
+        smartRefreshLayout.setOnRefreshListener(refreshLayout -> presenter.getData());
+        adapter = new FollowAdapter(datas);
+        rvContent.setLayoutManager(new GridLayoutManager(mActivity, 2));
+        rvContent.setAdapter(adapter);
         adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
+        adapter.disableLoadMoreIfNotFullPage(rvContent);
+
         adapter.setOnItemLongClickListener((adapter, view, position) -> {
             showTips(position);
             return true;
@@ -86,63 +93,48 @@ public class FollowFragment extends BaseFragment {
     }
 
     private void showTips(int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setMessage("真的要取消关注“ " + datas.get(position).getName() + " ”吗?")
-                .setTitle("提示")
-                .setPositiveButton("取消关注", (dialog, which) -> LitePal.deleteAllAsync(FollowEntity.class, "videoId =?", datas.get(position).getVideoId()).listen(new UpdateOrDeleteCallback() {
+        DialogHelper.showDialogCenter("提示", "真的要取消关注“ " + datas.get(position).getName() + " ”吗?",
+                "再想想", "取消关注", new NormalDialog.OnDialogListener() {
                     @Override
-                    public void onFinish(int rowsAffected) {
-                        ToastUtils.showShort("取消关注成功");
-                        dialog.dismiss();
-                        adapter.remove(position);
-                        if (adapter.getData().size() == 0) {
-                            EmptyView emptyView = new EmptyView(mActivity);
-                            emptyView.setInfo("什么都没有", "快去关注你感兴趣的影片吧！");
-                            adapter.setEmptyView(emptyView);
-                        }
+                    public void onCancel() {
+
                     }
-                }))
-                .setNegativeButton("再想想", (dialog, which) -> dialog.dismiss()).create().show();
+
+                    @Override
+                    public void onSure() {
+                        deleteFollow(position);
+                    }
+                });
+    }
+
+    private void deleteFollow(int position) {
+        presenter.deleteFollow(position, datas.get(position).getVideoId());
     }
 
     @Override
-    public void doBusiness() {
-        LitePal.order("createTime desc").findAsync(FollowEntity.class).listen(list -> {
-            datas.clear();
-            datas.addAll(list);
-            if (datas.size() == 0) {
-                EmptyView emptyView = new EmptyView(mActivity);
-                emptyView.setInfo("什么都没有", "快去关注你感兴趣的影片吧！");
-                adapter.setEmptyView(emptyView);
-            } else {
-                adapter.setNewData(datas);
-            }
-
-        });
+    public void getDataSuccess(List<FollowEntity> succeed) {
+        smartRefreshLayout.finishRefresh(true);
+        holder.showLoadSuccess();
+        datas.clear();
+        datas.addAll(succeed);
+        adapter.setNewData(datas);
     }
 
     @Override
-    public void onDebouncingClick(View view) {
-
+    public void getDataEmpty() {
+        smartRefreshLayout.finishRefresh(true);
+        holder.withData("快去关注你感兴趣的影片吧！").showEmpty();
     }
 
-
+    @Override
+    public void deleteSuccess(int position) {
+        adapter.remove(position);
+    }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        LitePal.order("createTime desc").findAsync(FollowEntity.class).listen(list -> {
-            datas.clear();
-            datas.addAll(list);
-            if (datas.size() == 0) {
-                EmptyView emptyView = new EmptyView(mActivity);
-                emptyView.setInfo("什么都没有", "快去关注你感兴趣的影片吧！");
-                adapter.setEmptyView(emptyView);
-            } else {
-                adapter.setNewData(datas);
-            }
-
-        });
+    public void onFailed(String failed) {
+        smartRefreshLayout.finishRefresh(false);
+        holder.withData(failed).showLoadFailed();
     }
 
 }

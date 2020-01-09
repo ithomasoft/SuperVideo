@@ -6,10 +6,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.google.android.material.snackbar.Snackbar;
-import com.thomas.video.ui.SettingActivity;
-
 import cn.jzvd.JZDataSource;
 import cn.jzvd.JZMediaInterface;
 import cn.jzvd.JZUtils;
@@ -100,19 +96,5 @@ public class SuperVideo extends JzvdStd {
             thumbImageView.setVisibility(View.GONE);
         }
     }
-
-
-    @Override
-    public void onStateError() {
-        super.onStateError();
-        Snackbar.make(this, "如果播放不了，请到设置中心切换播放引擎", Snackbar.LENGTH_LONG).
-                setAction("跳转", new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ActivityUtils.startActivity(SettingActivity.class);
-                    }
-                }).show();
-    }
-
 
 }

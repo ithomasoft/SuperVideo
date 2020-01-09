@@ -11,19 +11,19 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
-import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.CleanUtils;
-import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.PathUtils;
-import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
+import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.CleanUtils;
+import com.thomas.core.utils.FileUtils;
+import com.thomas.core.utils.PathUtils;
+import com.thomas.core.utils.SPUtils;
+import com.thomas.core.utils.ToastUtils;
+import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
-import com.thomas.video.base.BaseActivity;
+import com.thomas.video.base.ThomasActivity;
 
 import butterknife.BindView;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends ThomasActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -63,14 +63,14 @@ public class SettingActivity extends BaseActivity {
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
-        applyDebouncingClickListener(tvChangeHome, tvChangePlayer, tvChangeTheme, tvClean, tvSave);
+        applyThomasClickListener(tvChangeHome, tvChangePlayer, tvChangeTheme, tvClean, tvSave);
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            ActivityUtils.finishActivity(mActivity, true);
+            ActivityUtils.finishActivity(mActivity);
         }
         return true;
 
@@ -82,7 +82,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     @Override
-    public void onDebouncingClick(View view) {
+    public void onThomasClick(@NonNull View view) {
         int clickId = view.getId();
         if (clickId == R.id.tv_change_player) {
             showEngineDialog();
@@ -91,13 +91,11 @@ public class SettingActivity extends BaseActivity {
         } else if (clickId == R.id.tv_clean) {
             String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
 
-            showLoading("清理中。。。");
             Utils.runOnUiThreadDelayed(new Runnable() {
                 @Override
                 public void run() {
                     CleanUtils.cleanInternalCache();
                     ToastUtils.showShort("清理了" + size + "的缓存");
-                    hideLoading();
                 }
             }, 3000);
 
