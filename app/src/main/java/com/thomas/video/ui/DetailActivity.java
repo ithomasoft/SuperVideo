@@ -175,6 +175,10 @@ public class DetailActivity extends BaseActivity {
         } else {
             videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
         }
+        if (SPUtils.getInstance("setting").getBoolean("auto")) {
+            videoPlayer.startVideoAfterPreloading();
+        }
+
     }
 
 
@@ -184,7 +188,9 @@ public class DetailActivity extends BaseActivity {
         return true;
     }
 
-    /**更新菜单*/
+    /**
+     * 更新菜单
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (isFollow) {
@@ -213,14 +219,13 @@ public class DetailActivity extends BaseActivity {
                 showDownloadDialog();
                 break;
             default:
-                    break;
+                break;
         }
         return true;
 
     }
 
     private void showDownloadDialog() {
-        ToastUtils.showShort("即将上线");
 
     }
 
@@ -281,7 +286,7 @@ public class DetailActivity extends BaseActivity {
             public void onResponse(SimpleResponse<String, String> response) {
 
                 resultBean = JsoupHelper.parseVideoDetail(response.succeed());
-                ImageHelper.displayExtraImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
+                ImageHelper.displayImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
                 tvDetailAlias.setText(resultBean.getAlias());
                 tvDetailArea.setText(resultBean.getArea());
                 tvDetailLanguage.setText(resultBean.getLanguage());

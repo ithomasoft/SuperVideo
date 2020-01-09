@@ -14,9 +14,12 @@ import androidx.appcompat.widget.Toolbar;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.IntentUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.tencent.bugly.beta.Beta;
 import com.thomas.video.R;
 import com.thomas.video.base.BaseActivity;
+
+import java.util.Date;
 
 import butterknife.BindView;
 
@@ -34,6 +37,10 @@ public class AboutActivity extends BaseActivity {
     TextView tvShare;
     @BindView(R.id.tv_version)
     AppCompatTextView tvVersion;
+    @BindView(R.id.tv_copyright)
+    AppCompatTextView tvCopyright;
+
+
 
     @Override
     public boolean isNeedRegister() {
@@ -60,6 +67,8 @@ public class AboutActivity extends BaseActivity {
             actionBar.setDisplayShowTitleEnabled(true);
         }
         tvVersion.setText("V"+AppUtils.getAppVersionName());
+        tvCopyright.setText("Copyright ©"+ TimeUtils.date2String(new Date(),"yyyy")
+                +" All Rights Reserved www.okzyw.com");
         applyDebouncingClickListener(tvCheck, tvFeedback, tvOpen, tvShare);
     }
 

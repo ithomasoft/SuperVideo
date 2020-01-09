@@ -93,16 +93,19 @@ public class OpenSourceActivity extends BaseActivity {
     public void doBusiness() {
         datas.add(new OpenSourceBean("AndroidUtilCode", "https://github.com/Blankj/AndroidUtilCode"));
         datas.add(new OpenSourceBean("BaseRecyclerViewAdapterHelper", "https://github.com/CymChad/BaseRecyclerViewAdapterHelper"));
+        datas.add(new OpenSourceBean("SmartRefreshLayout", "https://github.com/scwang90/SmartRefreshLayout"));
         datas.add(new OpenSourceBean("Butterknife", "https://github.com/JakeWharton/butterknife"));
         datas.add(new OpenSourceBean("LitePal", "https://github.com/LitePalFramework/LitePal"));
-        datas.add(new OpenSourceBean("JiaoZiVideoPlayer", "https://github.com/lipangit/JiaoZiVideoPlayer"));
+        datas.add(new OpenSourceBean("JiaoZiVideoPlayer", "https://github.com/Jzvd/JiaoZiVideoPlayer"));
+        datas.add(new OpenSourceBean("ExoPlayer", "https://github.com/google/ExoPlayer"));
         datas.add(new OpenSourceBean("Jsoup", "https://github.com/jhy/jsoup"));
         datas.add(new OpenSourceBean("Kalle", "https://github.com/yanzhenjie/Kalle"));
         datas.add(new OpenSourceBean("Glide", "https://github.com/bumptech/glide"));
         datas.add(new OpenSourceBean("Fastjson", "https://github.com/alibaba/fastjson"));
-        datas.add(new OpenSourceBean("DoraemonKit", "https://github.com/didi/DoraemonKit"));
+        datas.add(new OpenSourceBean("OkDownload", "https://github.com/lingochamp/okdownload"));
         datas.add(new OpenSourceBean("EventBus", "https://github.com/greenrobot/EventBus"));
-        datas.add(new OpenSourceBean("SmartRefreshLayout", "https://github.com/scwang90/SmartRefreshLayout"));
+
+
     }
 
     @Override

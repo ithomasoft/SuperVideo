@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.CrashUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.ProcessUtils;
+import com.liulishuo.filedownloader.FileDownloader;
 import com.tencent.bugly.Bugly;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
@@ -113,7 +114,7 @@ public class SuperApplication extends MultiDexApplication {
         //初始数据库框架
         LitePal.initialize(this);
         //初始化下载器框架
-
+        FileDownloader.setup(this);
     }
 
 

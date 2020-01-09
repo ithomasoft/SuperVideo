@@ -55,13 +55,13 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     public void initView(Bundle savedInstanceState, View contentView) {
-        BarUtils.setStatusBarVisibility(this,false);
+        BarUtils.setStatusBarVisibility(this, false);
         BarUtils.setNavBarVisibility(this, false);
     }
 
     @Override
     public void doBusiness() {
-        new Handler().postDelayed(() -> getSplash(),1500);
+        new Handler().postDelayed(() -> getSplash(), 1500);
     }
 
 
@@ -75,12 +75,12 @@ public class SplashActivity extends BaseActivity {
                     Document document = Jsoup.parse(response.succeed());
                     String slogan = document.getElementById("quote").text();
                     String url = document.getElementsByClass("home-img").outerHtml()
-                            .replace("<div class=\"home-img\" style=\"background-image:url(","")
-                            .replace("div","")
-                            .replace("</>","")
-                            .replace(")\"> ","").trim();
-                    tvSlogan.setText(" 『  "+slogan+" 』");
-                    ImageHelper.displayImage(ivSplash,url);
+                            .replace("<div class=\"home-img\" style=\"background-image:url(", "")
+                            .replace("div", "")
+                            .replace("</>", "")
+                            .replace(")\"> ", "").trim();
+                    tvSlogan.setText(" 『  " + slogan + " 』");
+                    ImageHelper.displayImage(ivSplash, url);
                 }
             }
 
@@ -89,10 +89,11 @@ public class SplashActivity extends BaseActivity {
                 super.onEnd();
                 new Handler().postDelayed(() -> {
                     ActivityUtils.startActivity(MainActivity.class);
-                    ActivityUtils.finishActivity(SplashActivity.class,true);
-                },3500);
+                    ActivityUtils.finishActivity(SplashActivity.class, true);
+                }, 3500);
             }
         });
+
     }
 
     @Override

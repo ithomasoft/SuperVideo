@@ -47,7 +47,6 @@ public class SuperVideo extends JzvdStd {
         SAVE_PROGRESS = true;
     }
 
-
     @Override
     public void startVideo() {
         if (screen == SCREEN_FULLSCREEN) {

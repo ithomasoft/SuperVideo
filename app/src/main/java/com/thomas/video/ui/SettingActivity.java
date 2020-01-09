@@ -89,17 +89,25 @@ public class SettingActivity extends BaseActivity {
         } else if (clickId == R.id.tv_change_home) {
             showHomeDialog();
         } else if (clickId == R.id.tv_clean) {
-          String size =  FileUtils.getSize(PathUtils.getInternalAppCachePath());
+            String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
 
             showLoading("清理中。。。");
             Utils.runOnUiThreadDelayed(new Runnable() {
                 @Override
                 public void run() {
                     CleanUtils.cleanInternalCache();
-                    ToastUtils.showShort("清理了"+size+"的缓存");
+                    ToastUtils.showShort("清理了" + size + "的缓存");
                     hideLoading();
                 }
             }, 3000);
+
+        } else if (clickId == R.id.tv_save) {
+            SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto"));
+            if (SPUtils.getInstance("setting").getBoolean("auto")){
+                ToastUtils.showShort("开启省流量，不自动播放");
+            }else {
+                ToastUtils.showShort("关闭省流量，将自动播放");
+            }
 
         } else {
             ToastUtils.showShort("即将上线");

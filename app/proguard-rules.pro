@@ -76,3 +76,8 @@
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
 -keep class android.support.**{*;}
+
+-keep class com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite {
+        public com.liulishuo.okdownload.core.breakpoint.DownloadStore createRemitSelf();
+        public com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite(android.content.Context);
+}
