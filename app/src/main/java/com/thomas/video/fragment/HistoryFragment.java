@@ -136,6 +136,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
     public void getDataSuccess(List<HistoryEntity> succeed) {
         smartRefreshLayout.finishRefresh(true);
         holder.showLoadSuccess();
+        datas.clear();
         datas.addAll(succeed);
         adapter.setNewData(datas);
     }

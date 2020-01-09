@@ -27,7 +27,12 @@ public class DetailPresenter extends BaseMvpPresenter<DetailContract.Model, Deta
             @Override
             public void onResponse(SimpleResponse<String, String> response) {
                 if (isViewAttached()) {
-                    VideoDetailBean detailBean = JsoupHelper.parseVideoDetail(response.succeed());
+                    VideoDetailBean detailBean = null;
+                    try {
+                        detailBean = JsoupHelper.parseVideoDetail(response.succeed());
+                    } catch (Exception e) {
+                        getView().onFailed("出现未知异常异常");
+                    }
                     if (detailBean != null) {
                         getView().getDataSuccess(detailBean);
                     } else {

@@ -27,7 +27,12 @@ public class ResultPresenter extends BaseMvpPresenter<ResultContract.Model, Resu
             @Override
             public void onResponse(SimpleResponse<String, String> response) {
                 if (isViewAttached()) {
-                    SearchResultBean resultBean = JsoupHelper.parseSearchResult(response.succeed());
+                    SearchResultBean resultBean = null;
+                    try {
+                        resultBean = JsoupHelper.parseSearchResult(response.succeed());
+                    } catch (Exception e) {
+                        getView().onFailed("出现未知异常异常");
+                    }
 
                     getView().hasMoreData(resultBean.getPage().getPageindex() < resultBean.getPage().getPagecount());
 

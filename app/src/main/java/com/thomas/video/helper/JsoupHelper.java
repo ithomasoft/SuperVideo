@@ -19,7 +19,7 @@ import java.util.List;
  * @updatelog
  */
 public class JsoupHelper {
-    public static SearchResultBean parseSearchResult(String result) {
+    public static SearchResultBean parseSearchResult(String result) throws Exception{
         SearchResultBean resultBean = new SearchResultBean();
         Document doc = Jsoup.parse(result);
         Element element = doc.getElementsByClass("pages").last();
@@ -123,7 +123,7 @@ public class JsoupHelper {
         return resultBean;
     }
 
-    public static VideoDetailBean parseVideoDetail(String detail) {
+    public static VideoDetailBean parseVideoDetail(String detail) throws Exception{
         VideoDetailBean detailBean = new VideoDetailBean();
         Document doc = Jsoup.parse(detail);
         detailBean.setImgUrl(doc.getElementsByClass("lazy").attr("src"));

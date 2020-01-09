@@ -55,6 +55,8 @@ public class SearchFragment extends LazyThomasFragment {
             }
 
         });
+
+        applyThomasClickListener(ivSearch);
     }
 
 
