@@ -17,7 +17,15 @@ public class DownloadEntity extends LitePalSupport {
     private String downloadUrl;//下载地址
     private String createDate;//开始下载时间
     private String finishDate;//下载完成时间
-    private int state;//当前下载状态
+
+    @Column(unique = true)
+    private int taskId;
+
+    private int progress;
+    private long speed;
+    private int soFarBytes;
+    private int totalFarBytes;
+    private int status;
 
     public String getTitle() {
         return title;
@@ -59,11 +67,51 @@ public class DownloadEntity extends LitePalSupport {
         this.finishDate = finishDate;
     }
 
-    public int getState() {
-        return state;
+    public int getTaskId() {
+        return taskId;
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public long getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(long speed) {
+        this.speed = speed;
+    }
+
+    public int getSoFarBytes() {
+        return soFarBytes;
+    }
+
+    public void setSoFarBytes(int soFarBytes) {
+        this.soFarBytes = soFarBytes;
+    }
+
+    public int getTotalFarBytes() {
+        return totalFarBytes;
+    }
+
+    public void setTotalFarBytes(int totalFarBytes) {
+        this.totalFarBytes = totalFarBytes;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

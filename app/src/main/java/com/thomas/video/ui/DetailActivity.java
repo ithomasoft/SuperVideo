@@ -28,6 +28,7 @@ import com.thomas.video.engine.IjkEngine;
 import com.thomas.video.entity.EpisodeEntity;
 import com.thomas.video.entity.FollowEntity;
 import com.thomas.video.entity.HistoryEntity;
+import com.thomas.video.helper.DialogHelper;
 import com.thomas.video.helper.ImageHelper;
 import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.contract.DetailContract;
@@ -162,6 +163,8 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         });
 
         videoPlayer.setOnStartListener(() -> updateHistory());
+
+        applyThomasClickListener(tvDetailIntroduction);
     }
 
     private void updateHistory() {
@@ -240,7 +243,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     }
 
     private void showDownloadDialog() {
-
+//        DownLoadHelper.getImpl().startDownload(datas.get(0).getDownloadUrl());
     }
 
     /**
@@ -330,6 +333,14 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         holder.withData(failed).showLoadFailed();
     }
 
+
+    @Override
+    public void onThomasClick(@NonNull View view) {
+        int clickId = view.getId();
+        if (clickId == R.id.tv_detail_introduction) {
+            DialogHelper.showTipsCenter(resultBean.getIntroduction());
+        }
+    }
 
     @Override
     public void getDataSuccess(VideoDetailBean succeed) {
