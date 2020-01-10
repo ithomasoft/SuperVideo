@@ -68,7 +68,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
         if (holder == null) {
             holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1500);
+                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
             });
         }
 
@@ -109,6 +109,17 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
 
     private void deleteFollow(int position) {
         presenter.deleteFollow(position, datas.get(position).getVideoId());
+    }
+
+    @Override
+    protected void onFirstUserVisible() {
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
+    }
+
+    @Override
+    protected void onUserVisible() {
+        presenter.getData();
     }
 
     @Override

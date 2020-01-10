@@ -3,8 +3,12 @@ package com.thomas.video.helper;
 import android.content.Context;
 
 import com.thomas.core.utils.ActivityUtils;
+import com.thomas.video.bean.DialogItemBean;
+import com.thomas.video.widget.BottomDialog;
 import com.thomas.video.widget.NormalDialog;
 import com.thomas.video.widget.TipsDialog;
+
+import java.util.List;
 
 /**
  * @author Thomas
@@ -62,6 +66,13 @@ public class DialogHelper {
         NormalDialog.Builder builder = new NormalDialog.Builder(ActivityUtils.getTopActivity());
         NormalDialog dialog = builder.setTitle(title).setContent(content).setCancel(cancelStr).setSure(okStr).build();
         dialog.setOnDialogListener(onDialogListener);
+        dialog.showPopupWindow();
+    }
+
+    public static void showBottom(List<DialogItemBean> datas, BottomDialog.OnItemClickListener onItemClickListener) {
+        BottomDialog.Builder builder = new BottomDialog.Builder(ActivityUtils.getTopActivity());
+        BottomDialog dialog = builder.setItems(datas).build();
+        dialog.setOnItemClickListener(onItemClickListener);
         dialog.showPopupWindow();
     }
 }

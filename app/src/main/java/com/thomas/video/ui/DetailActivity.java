@@ -120,7 +120,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
             actionBar.setDisplayShowTitleEnabled(true);
         }
 
-        if (holder==null){
+        if (holder == null) {
             holder = StatusHelper.getDefault().wrap(rootDetail).withRetry(new Runnable() {
                 @Override
                 public void run() {
@@ -165,11 +165,8 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     }
 
     private void updateHistory() {
-        HistoryEntity entity;
-        List<HistoryEntity> historyEntityList = LitePal.where("videoId = ?", id).find(HistoryEntity.class);
-        if (historyEntityList.size() > 0) {
-            entity = historyEntityList.get(0);
-        } else {
+        HistoryEntity entity = LitePal.where("videoId = ?", id).findFirst(HistoryEntity.class);
+        if (entity == null) {
             entity = new HistoryEntity();
             entity.setVideoId(id);
             entity.setImgUrl(resultBean.getImgUrl());
@@ -179,7 +176,6 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         entity.setCreateTime(TimeUtils.getNowString());
         entity.setCurrentEpisode(currentEpisode);
         entity.save();
-
     }
 
 
@@ -193,7 +189,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         } else {
             videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
         }
-        if (SPUtils.getInstance("setting").getBoolean("auto")) {
+        if (SPUtils.getInstance("setting").getBoolean("auto", true)) {
             videoPlayer.startVideoAfterPreloading();
         }
 
@@ -290,12 +286,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     @Override
     public void doBusiness() {
         holder.showLoading();
-        Utils.runOnUiThreadDelayed(new Runnable() {
-            @Override
-            public void run() {
-                presenter.getData(url);
-            }
-        },1500);
+        Utils.runOnUiThreadDelayed(() -> presenter.getData(url), 1000);
     }
 
     /**
@@ -336,7 +327,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
 
     @Override
     public void onFailed(String failed) {
-holder.withData(failed).showLoadFailed();
+        holder.withData(failed).showLoadFailed();
     }
 
 
@@ -357,7 +348,6 @@ holder.withData(failed).showLoadFailed();
         tvDetailIntroduction.setText(resultBean.getIntroduction());
         datas.addAll(resultBean.getEpisodeList());
         adapter.setNewData(datas);
-
 
         db_datas = LitePal.where("videoId = ?", id).find(FollowEntity.class);
         db_history = LitePal.where("videoId = ?", id).find(HistoryEntity.class);

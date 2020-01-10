@@ -82,7 +82,7 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
                     currentPage = 1;
                     datas.clear();
                     presenter.getData(currentPage, key);
-                }, 1500);
+                }, 1000);
             });
         }
 
@@ -134,7 +134,7 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
             public void run() {
                 presenter.getData(currentPage, key);
             }
-        },1500);
+        },1000);
 
     }
 

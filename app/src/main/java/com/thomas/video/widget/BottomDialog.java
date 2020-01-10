@@ -1,0 +1,115 @@
+package com.thomas.video.widget;
+
+import android.content.Context;
+import android.view.Gravity;
+import android.view.View;
+import android.view.animation.Animation;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.thomas.video.R;
+import com.thomas.video.bean.DialogItemBean;
+
+import java.util.List;
+
+import razerdp.basepopup.BasePopupWindow;
+
+/**
+ * @author Thomas
+ * @describe
+ * @date 2020/1/10
+ * @updatelog
+ * @since
+ */
+public class BottomDialog  extends BasePopupWindow {
+    private RecyclerView rvDialogContent;
+    private OnItemClickListener onItemClickListener;
+
+    private BottomDialog(Context context) {
+        super(context);
+    }
+
+    private BottomDialog(Context context, Builder builder) {
+        this(context);
+        rvDialogContent = findViewById(R.id.rv_dialog_content);
+        setAlignBackground(false);
+        setClipChildren(false);
+        setPopupGravity(Gravity.BOTTOM);
+        setContent(builder);
+    }
+
+    private void setContent(final Builder builder) {
+        DialogMenuAdapter adapter = new DialogMenuAdapter(builder.items);
+        rvDialogContent.setAdapter(adapter);
+        rvDialogContent.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(builder.items.get(position), position);
+                    dismiss();
+                }
+            }
+        });
+    }
+
+    @Override
+    public View onCreateContentView() {
+        return createPopupById(R.layout.view_bottom_dialog);
+    }
+
+    @Override
+    protected Animation onCreateShowAnimation() {
+        return getTranslateVerticalAnimation(1f, 0, 360);
+    }
+
+    @Override
+    protected Animation onCreateDismissAnimation() {
+        return getTranslateVerticalAnimation(0, 1f, 360);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+
+    public interface OnItemClickListener {
+        void onItemClick(DialogItemBean itemBean, int position);
+    }
+
+    public static class Builder {
+        private Context context;
+        private List<DialogItemBean> items;
+
+        public Builder(Context context) {
+            this.context = context;
+        }
+
+        public Builder setItems(List<DialogItemBean> items) {
+            this.items = items;
+            return this;
+        }
+
+        public BottomDialog build() {
+            return new BottomDialog(context, this);
+        }
+    }
+
+    private class DialogMenuAdapter extends BaseQuickAdapter<DialogItemBean, BaseViewHolder> {
+
+        public DialogMenuAdapter(@Nullable List<DialogItemBean> data) {
+            super(R.layout.item_bottom_dialog, data);
+        }
+
+        @Override
+        protected void convert(@NonNull BaseViewHolder helper, DialogItemBean item) {
+            helper.setText(R.id.tv_dialog_item_name, item.getName());
+        }
+    }
+}

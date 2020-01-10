@@ -105,6 +105,8 @@ dependencies {
 
     //升级错误信息收集框架
     implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'
-
+    //网页框架
+    implementation 'com.just.agentweb:agentweb:4.1.2'
+    implementation 'com.just.agentweb:filechooser:4.1.2'
 
 }

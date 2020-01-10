@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.video.R;
+import com.thomas.video.adapter.OpenSourceAdapter;
 import com.thomas.video.base.ThomasActivity;
 import com.thomas.video.bean.OpenSourceBean;
 
@@ -32,7 +32,7 @@ public class OpenSourceActivity extends ThomasActivity {
     Toolbar toolbar;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    private BaseQuickAdapter<OpenSourceBean, BaseViewHolder> adapter;
+    private OpenSourceAdapter adapter;
     private List<OpenSourceBean> datas = new ArrayList<>();
 
     @Override
@@ -59,15 +59,8 @@ public class OpenSourceActivity extends ThomasActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+        adapter = new OpenSourceAdapter(datas);
 
-
-        adapter = new BaseQuickAdapter<OpenSourceBean, BaseViewHolder>(R.layout.item_open_source, datas) {
-            @Override
-            protected void convert(BaseViewHolder helper, OpenSourceBean item) {
-                helper.setText(R.id.item_tv_name, item.getName());
-                helper.setText(R.id.item_tv_url, item.getUrl());
-            }
-        };
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
         adapter.setPreLoadNumber(0);
@@ -104,8 +97,6 @@ public class OpenSourceActivity extends ThomasActivity {
         datas.add(new OpenSourceBean("Fastjson", "https://github.com/alibaba/fastjson"));
         datas.add(new OpenSourceBean("OkDownload", "https://github.com/lingochamp/okdownload"));
         datas.add(new OpenSourceBean("EventBus", "https://github.com/greenrobot/EventBus"));
-
-
     }
 
     @Override

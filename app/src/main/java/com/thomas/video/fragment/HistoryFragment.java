@@ -62,7 +62,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
         if (holder == null) {
             holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1500);
+                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
             });
         }
 
@@ -106,7 +106,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
             public void run() {
                 presenter.getData();
             }
-        }, 1500);
+        }, 1000);
 
     }
 

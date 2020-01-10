@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="360dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/thomas_shape_r8_white">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_dialog_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/selectableItemBackground"
+            android:overScrollMode="never" />
+    </androidx.core.widget.NestedScrollView>
+</androidx.appcompat.widget.LinearLayoutCompat>

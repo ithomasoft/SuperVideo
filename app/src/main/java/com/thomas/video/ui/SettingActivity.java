@@ -1,6 +1,5 @@
 package com.thomas.video.ui;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.thomas.core.utils.ActivityUtils;
@@ -20,6 +18,12 @@ import com.thomas.core.utils.ToastUtils;
 import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
 import com.thomas.video.base.ThomasActivity;
+import com.thomas.video.bean.DialogItemBean;
+import com.thomas.video.helper.DialogHelper;
+import com.thomas.video.widget.BottomDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -90,21 +94,17 @@ public class SettingActivity extends ThomasActivity {
             showHomeDialog();
         } else if (clickId == R.id.tv_clean) {
             String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
-
-            Utils.runOnUiThreadDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    CleanUtils.cleanInternalCache();
-                    ToastUtils.showShort("清理了" + size + "的缓存");
-                }
+            Utils.runOnUiThreadDelayed(() -> {
+                CleanUtils.cleanInternalCache();
+                ToastUtils.showShort("清理了" + size + "的缓存");
             }, 3000);
 
         } else if (clickId == R.id.tv_save) {
-            SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto"));
-            if (SPUtils.getInstance("setting").getBoolean("auto")){
-                ToastUtils.showShort("开启省流量，不自动播放");
-            }else {
+            SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto",true));
+            if (SPUtils.getInstance("setting").getBoolean("auto")) {
                 ToastUtils.showShort("关闭省流量，将自动播放");
+            } else {
+                ToastUtils.showShort("开启省流量，不自动播放");
             }
 
         } else {
@@ -114,31 +114,31 @@ public class SettingActivity extends ThomasActivity {
     }
 
     private void showHomeDialog() {
-        CharSequence[] items = new CharSequence[]{"将【够看搜索】设为主页", "将【我的关注】设为主页"};
-        int selectItem = SPUtils.getInstance("setting").getInt("home", 0);
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setSingleChoiceItems(items, selectItem, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SPUtils.getInstance("setting").put("home", i);
-                ToastUtils.showShort(items[i]);
-                dialogInterface.dismiss();
-            }
-        }).setTitle("设置主页").create().show();
+        List<DialogItemBean> datas = new ArrayList<>();
+        DialogItemBean searchBean = new DialogItemBean("将【够看搜索】设为主页", "0");
+        DialogItemBean followBean = new DialogItemBean("将【我的关注】设为主页", "1");
+        datas.add(searchBean);
+        datas.add(followBean);
+        DialogHelper.showBottom(datas, (itemBean, position) -> {
+            SPUtils.getInstance("setting").put("home", position);
+            ToastUtils.showShort("切换成功！");
+        });
     }
 
     private void showEngineDialog() {
-        CharSequence[] items = new CharSequence[]{"系统播放器", "哔哩哔哩播放器", "谷歌播放器"};
-        int selectItem = SPUtils.getInstance("setting").getInt("engine", 0);
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-        builder.setSingleChoiceItems(items, selectItem, new DialogInterface.OnClickListener() {
+        List<DialogItemBean> datas = new ArrayList<>();
+        DialogItemBean systemBean = new DialogItemBean("系统播放器", "0");
+        DialogItemBean ijkBean = new DialogItemBean("哔哩哔哩播放器", "1");
+        DialogItemBean exoBean = new DialogItemBean("谷歌播放器", "2");
+        datas.add(systemBean);
+        datas.add(ijkBean);
+        datas.add(exoBean);
+        DialogHelper.showBottom(datas, new BottomDialog.OnItemClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SPUtils.getInstance("setting").put("engine", i);
-                dialogInterface.dismiss();
+            public void onItemClick(DialogItemBean itemBean, int position) {
+                SPUtils.getInstance("setting").put("engine", position);
+                ToastUtils.showShort("切换成功！");
             }
-        }).setTitle("选择播放器").create().show();
+        });
     }
 }

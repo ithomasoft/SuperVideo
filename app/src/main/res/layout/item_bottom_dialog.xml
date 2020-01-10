@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tv_dialog_item_name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/thomas_bg_item_r8_selector"
+    android:ellipsize="middle"
+    android:gravity="center"
+    android:padding="16dp"
+    android:singleLine="true"
+    android:textColor="@color/thomas_color_normal_text"
+    android:textSize="14dp"
+    tools:text="选项一" />
