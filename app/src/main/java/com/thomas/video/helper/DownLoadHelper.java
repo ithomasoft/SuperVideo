@@ -47,7 +47,7 @@ public class DownLoadHelper {
     private FileDownloadListener fileDownloadListener = new FileDownloadLargeFileListener() {
         @Override
         protected void pending(BaseDownloadTask task, long soFarBytes, long totalBytes) {
-            LogUtils.e(soFarBytes+"--pending--"+totalBytes);
+            LogUtils.e(soFarBytes+"--pending--"+totalBytes+"---"+task.getFilename());
 //            saveDownloadInfo(task);
         }
 
