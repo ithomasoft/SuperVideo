@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-//    splits {
-//        abi {
-//            enable true
-//            reset()
-//            include 'armeabi-v7a'
-//            universalApk false
-//        }
-//    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a'
+            universalApk false
+        }
+    }
     signingConfigs {
         release {
             keyAlias 'thomas'
