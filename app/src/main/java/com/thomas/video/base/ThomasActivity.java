@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import com.thomas.core.ui.BaseActivity;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.BarUtils;
+import com.thomas.core.utils.ClickUtils;
 import com.thomas.video.R;
 import com.thomas.video.helper.StatusHelper;
 import com.yanzhenjie.kalle.Kalle;

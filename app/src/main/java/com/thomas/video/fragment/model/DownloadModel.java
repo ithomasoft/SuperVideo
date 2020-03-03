@@ -1,10 +1,8 @@
 package com.thomas.video.fragment.model;
 
-import com.thomas.video.entity.DownloadEntity;
+import com.arialyy.aria.core.Aria;
 import com.thomas.video.fragment.contract.DownloadContract;
-
-import org.litepal.LitePal;
-import org.litepal.crud.callback.FindMultiCallback;
+import com.thomas.video.helper.DownLoadCallback;
 
 /**
  * @author Thomas
@@ -14,8 +12,11 @@ import org.litepal.crud.callback.FindMultiCallback;
  * @since
  */
 public class DownloadModel implements DownloadContract.Model {
+
+
     @Override
-    public void getData(int type, FindMultiCallback<DownloadEntity> callback) {
-        LitePal.where("state = ?", type + "").order("createDate desc").findAsync(DownloadEntity.class).listen(callback);
+    public void getData(int type, DownLoadCallback callback) {
+        callback.onResult(type == 0 ? Aria.download(this).getAllNotCompleteTask() : Aria.download(this).getAllCompleteTask());
     }
+
 }

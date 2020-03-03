@@ -8,10 +8,6 @@
         android:id="@+id/appCompatImageView"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:scaleType="centerInside"
         android:src="@drawable/app_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,10 +44,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
-               android:singleLine="true"
+                android:hint="想看什么随便搜!"
                 android:imeOptions="actionSearch"
                 android:padding="6dp"
-                android:hint="想看什么随便搜!"
+                android:singleLine="true"
                 android:textColor="@android:color/primary_text_light"
                 android:textSize="12dp" />
 

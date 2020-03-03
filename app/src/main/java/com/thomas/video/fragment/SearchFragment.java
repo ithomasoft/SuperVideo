@@ -11,9 +11,11 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.KeyboardUtils;
+import com.thomas.core.utils.SPUtils;
 import com.thomas.core.utils.ToastUtils;
 import com.thomas.video.R;
 import com.thomas.video.base.LazyThomasFragment;
+import com.thomas.video.helper.ImageHelper;
 import com.thomas.video.ui.ResultActivity;
 
 import butterknife.BindView;

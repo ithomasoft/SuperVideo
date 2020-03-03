@@ -40,8 +40,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
     SmartRefreshLayout smartRefreshLayout;
 
 
-    private FollowAdapter adapter;
-    private List<FollowEntity> datas = new ArrayList<>();
+    private FollowAdapter mAdapter;
 
     @Override
     protected FollowPresenter createPresenter() {
@@ -73,27 +72,25 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
         }
 
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> presenter.getData());
-        adapter = new FollowAdapter(datas);
+        mAdapter = new FollowAdapter();
         rvContent.setLayoutManager(new GridLayoutManager(mActivity, 2));
-        rvContent.setAdapter(adapter);
-        adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(rvContent);
+        rvContent.setAdapter(mAdapter);
 
-        adapter.setOnItemLongClickListener((adapter, view, position) -> {
+        mAdapter.setOnItemLongClickListener((adapter, view, position) -> {
             showTips(position);
             return true;
         });
-        adapter.setOnItemClickListener((adapter, view, position) -> {
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
-            bundle.putString("title", datas.get(position).getName());
-            bundle.putString("id", datas.get(position).getVideoId());
-            bundle.putString("url", "?m=vod-detail-id-" + datas.get(position).getVideoId() + ApiConstant.END_URL);
+            bundle.putString("title", mAdapter.getData().get(position).getName());
+            bundle.putString("id", mAdapter.getData().get(position).getVideoId());
+            bundle.putString("url", "?m=vod-detail-id-" + mAdapter.getData().get(position).getVideoId() + ApiConstant.END_URL);
             ActivityUtils.startActivity(bundle, DetailActivity.class);
         });
     }
 
     private void showTips(int position) {
-        DialogHelper.showDialogCenter("提示", "真的要取消关注“ " + datas.get(position).getName() + " ”吗?",
+        DialogHelper.showDialogCenter("提示", "真的要取消关注“ " + mAdapter.getData().get(position).getName() + " ”吗?",
                 "再想想", "取消关注", new NormalDialog.OnDialogListener() {
                     @Override
                     public void onCancel() {
@@ -108,7 +105,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
     }
 
     private void deleteFollow(int position) {
-        presenter.deleteFollow(position, datas.get(position).getVideoId());
+        presenter.deleteFollow(position, mAdapter.getData().get(position).getVideoId());
     }
 
     @Override
@@ -126,9 +123,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
     public void getDataSuccess(List<FollowEntity> succeed) {
         smartRefreshLayout.finishRefresh(true);
         holder.showLoadSuccess();
-        datas.clear();
-        datas.addAll(succeed);
-        adapter.setNewData(datas);
+        mAdapter.setNewData(succeed);
     }
 
     @Override
@@ -139,7 +134,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
 
     @Override
     public void deleteSuccess(int position) {
-        adapter.remove(position);
+        mAdapter.remove(position);
     }
 
     @Override

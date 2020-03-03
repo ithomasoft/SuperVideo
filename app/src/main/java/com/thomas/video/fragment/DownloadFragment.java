@@ -7,13 +7,14 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.arialyy.aria.core.Aria;
+import com.arialyy.aria.core.download.DownloadEntity;
 import com.google.android.material.tabs.TabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
 import com.thomas.video.adapter.DownloadAdapter;
 import com.thomas.video.base.LazyThomasMvpFragment;
-import com.thomas.video.entity.DownloadEntity;
 import com.thomas.video.fragment.contract.DownloadContract;
 import com.thomas.video.fragment.presenter.DownloadPresenter;
 import com.thomas.video.helper.StatusHelper;
@@ -56,7 +57,7 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
 
     @Override
     public void initData(@Nullable Bundle bundle) {
-
+        Aria.download(this).register();
     }
 
     @Override
@@ -81,6 +82,21 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
         tabLayout.addTab(tabLayout.newTab().setText("正在下载"), 0, true);
         tabLayout.addTab(tabLayout.newTab().setText("下载完成"), 1, false);
 
+        adapter = new DownloadAdapter(datas);
+        rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
+        rvContent.setAdapter(adapter);
+    }
+
+
+    @Override
+    protected void onFirstUserVisible() {
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
+
+    }
+
+    @Override
+    protected void onUserVisible() {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -99,23 +115,6 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
                 presenter.getData(type);
             }
         });
-
-        adapter = new DownloadAdapter(datas);
-        rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
-        rvContent.setAdapter(adapter);
-    }
-
-
-    @Override
-    protected void onFirstUserVisible() {
-        holder.showLoading();
-        Utils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
-
-    }
-
-    @Override
-    protected void onUserVisible() {
-        presenter.getData(type);
     }
 
     @Override

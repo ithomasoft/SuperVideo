@@ -69,7 +69,7 @@ public class DialogHelper {
         dialog.showPopupWindow();
     }
 
-    public static void showBottom(List<DialogItemBean> datas, BottomDialog.OnItemClickListener onItemClickListener) {
+    public static void showBottom(List<DialogItemBean> datas, BottomDialog.OnDialogItemClickListener onItemClickListener) {
         BottomDialog.Builder builder = new BottomDialog.Builder(ActivityUtils.getTopActivity());
         BottomDialog dialog = builder.setItems(datas).build();
         dialog.setOnItemClickListener(onItemClickListener);

@@ -22,7 +22,6 @@ import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.DetailActivity;
 import com.thomas.video.widget.NormalDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,8 +38,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
     @BindView(R.id.smart_refresh_layout)
     SmartRefreshLayout smartRefreshLayout;
 
-    private HistoryAdapter adapter;
-    private List<HistoryEntity> datas = new ArrayList<>();
+    private HistoryAdapter mAdapter;
 
     @Override
     public boolean isNeedRegister() {
@@ -67,23 +65,27 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
         }
 
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> presenter.getData());
-        adapter = new HistoryAdapter(datas);
+        mAdapter = new HistoryAdapter();
         rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
-        rvContent.setAdapter(adapter);
-        adapter.setOnItemClickListener((adapter, view, position) -> {
+        rvContent.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();
-            bundle.putString("title", datas.get(position).getName());
-            bundle.putString("id", datas.get(position).getVideoId());
-            bundle.putString("url", "?m=vod-detail-id-" + datas.get(position).getVideoId() + ApiConstant.END_URL);
+            bundle.putString("title", mAdapter.getData().get(position).getName());
+            bundle.putString("id", mAdapter.getData().get(position).getVideoId());
+            bundle.putString("url", "?m=vod-detail-id-" + mAdapter.getData().get(position).getVideoId() + ApiConstant.END_URL);
             ActivityUtils.startActivity(bundle, DetailActivity.class);
         });
-        adapter.setOnItemChildClickListener((adapter, view, position) -> {
-            showTips(position);
+
+        mAdapter.setOnDeleteListener(new HistoryAdapter.OnDeleteListener() {
+            @Override
+            public void delete(int position) {
+                showTips(position);
+            }
         });
     }
 
     private void showTips(int position) {
-        DialogHelper.showDialogCenter("提示", "真的要删除“ " + datas.get(position).getName() + " ”的记录吗?",
+        DialogHelper.showDialogCenter("提示", "真的要删除“ " + mAdapter.getData().get(position).getName() + " ”的记录吗?",
                 "再想想", "删除记录", new NormalDialog.OnDialogListener() {
                     @Override
                     public void onCancel() {
@@ -117,7 +119,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
     }
 
     private void deleteHistory(int position) {
-        presenter.deleteHistory(position, datas.get(position).getVideoId());
+        presenter.deleteHistory(position, mAdapter.getData().get(position).getVideoId());
     }
 
 
@@ -136,9 +138,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
     public void getDataSuccess(List<HistoryEntity> succeed) {
         smartRefreshLayout.finishRefresh(true);
         holder.showLoadSuccess();
-        datas.clear();
-        datas.addAll(succeed);
-        adapter.setNewData(datas);
+        mAdapter.setNewData(succeed);
     }
 
     @Override
@@ -149,6 +149,6 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
 
     @Override
     public void deleteSuccess(int position) {
-        adapter.remove(position);
+        mAdapter.remove(position);
     }
 }

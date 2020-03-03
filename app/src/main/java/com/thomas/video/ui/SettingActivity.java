@@ -3,12 +3,12 @@ package com.thomas.video.ui;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
+import com.allen.library.SuperTextView;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.CleanUtils;
 import com.thomas.core.utils.FileUtils;
@@ -32,15 +32,15 @@ public class SettingActivity extends ThomasActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tv_change_player)
-    TextView tvChangePlayer;
+    SuperTextView tvChangePlayer;
     @BindView(R.id.tv_change_home)
-    TextView tvChangeHome;
+    SuperTextView tvChangeHome;
     @BindView(R.id.tv_change_theme)
-    TextView tvChangeTheme;
+    SuperTextView tvChangeTheme;
     @BindView(R.id.tv_clean)
-    TextView tvClean;
+    SuperTextView tvClean;
     @BindView(R.id.tv_save)
-    TextView tvSave;
+    SuperTextView tvSave;
 
     @Override
     public boolean isNeedRegister() {
@@ -66,6 +66,20 @@ public class SettingActivity extends ThomasActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(true);
         }
+
+        int player = SPUtils.getInstance("setting").getInt("engine", 0);
+        tvChangePlayer.setRightString(player == 0 ? "系统播放器" : "谷歌播放器");
+
+
+        int home = SPUtils.getInstance("setting").getInt("home", 0);
+        tvChangeHome.setRightString(home == 0 ? "够看搜索" : "我的关注");
+
+        String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
+        tvClean.setRightString(size);
+
+        boolean save = SPUtils.getInstance("setting").getBoolean("auto");
+        tvSave.setSwitchClickable(false);
+        tvSave.setSwitchIsChecked(save);
 
         applyThomasClickListener(tvChangeHome, tvChangePlayer, tvChangeTheme, tvClean, tvSave);
     }
@@ -93,20 +107,15 @@ public class SettingActivity extends ThomasActivity {
         } else if (clickId == R.id.tv_change_home) {
             showHomeDialog();
         } else if (clickId == R.id.tv_clean) {
+            CleanUtils.cleanInternalCache();
             String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
-            Utils.runOnUiThreadDelayed(() -> {
-                CleanUtils.cleanInternalCache();
-                ToastUtils.showShort("清理了" + size + "的缓存");
-            }, 3000);
+            tvClean.setRightString(size);
+            ToastUtils.showShort("清理了完成");
 
         } else if (clickId == R.id.tv_save) {
-            SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto",true));
-            if (SPUtils.getInstance("setting").getBoolean("auto")) {
-                ToastUtils.showShort("关闭省流量，将自动播放");
-            } else {
-                ToastUtils.showShort("开启省流量，不自动播放");
-            }
-
+            SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto", true));
+            boolean save = SPUtils.getInstance("setting").getBoolean("auto");
+            tvSave.setSwitchIsChecked(save);
         } else {
             ToastUtils.showShort("即将上线");
         }
@@ -128,12 +137,10 @@ public class SettingActivity extends ThomasActivity {
     private void showEngineDialog() {
         List<DialogItemBean> datas = new ArrayList<>();
         DialogItemBean systemBean = new DialogItemBean("系统播放器", "0");
-        DialogItemBean ijkBean = new DialogItemBean("哔哩哔哩播放器", "1");
-        DialogItemBean exoBean = new DialogItemBean("谷歌播放器", "2");
+        DialogItemBean exoBean = new DialogItemBean("谷歌播放器", "1");
         datas.add(systemBean);
-        datas.add(ijkBean);
         datas.add(exoBean);
-        DialogHelper.showBottom(datas, new BottomDialog.OnItemClickListener() {
+        DialogHelper.showBottom(datas, new BottomDialog.OnDialogItemClickListener() {
             @Override
             public void onItemClick(DialogItemBean itemBean, int position) {
                 SPUtils.getInstance("setting").put("engine", position);

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.video.R;
 import com.thomas.video.adapter.OpenSourceAdapter;
@@ -63,14 +64,12 @@ public class OpenSourceActivity extends ThomasActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
         recyclerView.setAdapter(adapter);
-        adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
         AppCompatTextView footerView = new AppCompatTextView(mActivity);
         footerView.setGravity(Gravity.CENTER);
         footerView.setPadding(36, 36, 36, 36);
         footerView.setText("开源世界，万物皆精彩");
         adapter.setFooterView(footerView);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent();

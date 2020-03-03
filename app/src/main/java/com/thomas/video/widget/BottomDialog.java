@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.thomas.video.R;
 import com.thomas.video.bean.DialogItemBean;
 
@@ -28,7 +29,7 @@ import razerdp.basepopup.BasePopupWindow;
  */
 public class BottomDialog  extends BasePopupWindow {
     private RecyclerView rvDialogContent;
-    private OnItemClickListener onItemClickListener;
+    private OnDialogItemClickListener onItemClickListener;
 
     private BottomDialog(Context context) {
         super(context);
@@ -48,13 +49,19 @@ public class BottomDialog  extends BasePopupWindow {
         rvDialogContent.setAdapter(adapter);
         rvDialogContent.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick(builder.items.get(position), position);
                     dismiss();
                 }
+            }
+        });
+        adapter.setOnItemClickListener(new com.chad.library.adapter.base.listener.OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+
             }
         });
     }
@@ -74,12 +81,12 @@ public class BottomDialog  extends BasePopupWindow {
         return getTranslateVerticalAnimation(0, 1f, 360);
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    public void setOnItemClickListener(OnDialogItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
 
-    public interface OnItemClickListener {
+    public interface OnDialogItemClickListener {
         void onItemClick(DialogItemBean itemBean, int position);
     }
 

@@ -11,6 +11,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.allen.library.SuperTextView;
 import com.tencent.bugly.beta.Beta;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.AppUtils;
@@ -28,13 +29,13 @@ public class AboutActivity extends ThomasActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tv_check)
-    TextView tvCheck;
+    SuperTextView tvCheck;
     @BindView(R.id.tv_feedback)
-    TextView tvFeedback;
+    SuperTextView tvFeedback;
     @BindView(R.id.tv_open)
-    TextView tvOpen;
+    SuperTextView tvOpen;
     @BindView(R.id.tv_share)
-    TextView tvShare;
+    SuperTextView tvShare;
     @BindView(R.id.tv_version)
     AppCompatTextView tvVersion;
     @BindView(R.id.tv_copyright)

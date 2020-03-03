@@ -2,6 +2,7 @@ package com.thomas.video.ui;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.BarUtils;
+import com.thomas.core.utils.SPUtils;
+import com.thomas.core.utils.TimeUtils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
 import com.thomas.video.base.ThomasActivity;
@@ -21,6 +24,8 @@ import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.util.Date;
 
 import butterknife.BindView;
 
@@ -37,6 +42,7 @@ public class SplashActivity extends ThomasActivity {
     TextView tvSlogan;
     @BindView(R.id.ll_slogan)
     LinearLayout llSlogan;
+    private String flag;
 
     @Override
     public boolean isNeedRegister() {
@@ -45,7 +51,7 @@ public class SplashActivity extends ThomasActivity {
 
     @Override
     public void initData(@NonNull Bundle bundle) {
-
+        flag = TimeUtils.date2String(new Date(), "yyyyMMdd");
     }
 
     @Override
@@ -67,11 +73,27 @@ public class SplashActivity extends ThomasActivity {
 
     @Override
     public void doBusiness() {
-        new Handler().postDelayed(() -> getSplash(), 1500);
+        new Handler().postDelayed(() -> {
+
+            String splash = SPUtils.getInstance("splash").getString(flag);
+            if (TextUtils.isEmpty(splash)) {
+                getSplash();
+            } else {
+                llSlogan.setVisibility(View.VISIBLE);
+                tvSlogan.setText(" 『  " + splash.split("_")[0] + " 』");
+                ImageHelper.displayImage(ivSplash, splash.split("_")[1]);
+                new Handler().postDelayed(() -> {
+                    ActivityUtils.startActivity(MainActivity.class);
+                    ActivityUtils.finishActivity(SplashActivity.class, true);
+                }, 3500);
+            }
+
+        }, 1500);
     }
 
 
     private void getSplash() {
+
         Kalle.get(ApiConstant.Others.ONE_URL).perform(new SimpleCallback<String>() {
 
             @Override
@@ -87,6 +109,7 @@ public class SplashActivity extends ThomasActivity {
                             .replace(")\"> ", "").trim();
                     tvSlogan.setText(" 『  " + slogan + " 』");
                     ImageHelper.displayImage(ivSplash, url);
+                    SPUtils.getInstance("splash").put(flag, slogan + "_" + url);
                 }
             }
 
@@ -99,6 +122,7 @@ public class SplashActivity extends ThomasActivity {
                 }, 3500);
             }
         });
+
 
     }
 

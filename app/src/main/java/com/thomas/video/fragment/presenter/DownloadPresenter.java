@@ -1,13 +1,8 @@
 package com.thomas.video.fragment.presenter;
 
 import com.thomas.core.mvp.BaseMvpPresenter;
-import com.thomas.video.entity.DownloadEntity;
 import com.thomas.video.fragment.contract.DownloadContract;
 import com.thomas.video.fragment.model.DownloadModel;
-
-import org.litepal.crud.callback.FindMultiCallback;
-
-import java.util.List;
 
 /**
  * @author Thomas

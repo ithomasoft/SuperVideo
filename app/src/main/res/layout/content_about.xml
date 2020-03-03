@@ -56,61 +56,69 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_check"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="检查更新"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="检查更新"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC" />
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_feedback"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="意见反馈"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC" />
-            <TextView
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="意见反馈"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
+
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_open"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="开源项目"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="开源项目"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC" />
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_share"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="告诉伙伴"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
-
-
-
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="告诉伙伴"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
 
 
         </LinearLayout>

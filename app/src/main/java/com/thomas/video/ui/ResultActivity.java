@@ -104,8 +104,6 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
         adapter = new ResultAdapter(datas);
         rvContent.setLayoutManager(new LinearLayoutManager(this));
         rvContent.setAdapter(adapter);
-        adapter.setPreLoadNumber(0);
-        adapter.disableLoadMoreIfNotFullPage(rvContent);
 
         adapter.setOnItemClickListener((adapter, view, position) -> {
             Bundle bundle = new Bundle();

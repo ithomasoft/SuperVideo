@@ -77,7 +77,13 @@
 -keep public class com.tencent.bugly.**{*;}
 -keep class android.support.**{*;}
 
--keep class com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite {
-        public com.liulishuo.okdownload.core.breakpoint.DownloadStore createRemitSelf();
-        public com.liulishuo.okdownload.core.breakpoint.BreakpointStoreOnSQLite(android.content.Context);
+-dontwarn com.arialyy.aria.**
+-keep class com.arialyy.aria.**{*;}
+-keep class **$$DownloadListenerProxy{ *; }
+-keep class **$$UploadListenerProxy{ *; }
+-keep class **$$DownloadGroupListenerProxy{ *; }
+-keepclasseswithmembernames class * {
+    @Download.* <methods>;
+    @Upload.* <methods>;
+    @DownloadGroup.* <methods>;
 }

@@ -33,46 +33,60 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_change_player"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="切换引擎"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="选择播放器"
+                app:sRightTextColor="#A1A1A1"
+                app:sRightTextSize="14dp"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC"/>
-
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_change_home"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="切换主页"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="选择主页"
+                app:sRightTextColor="#A1A1A1"
+                app:sRightTextSize="14dp"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC" />
-
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_change_theme"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="切换主题"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="选择主题"
+                app:sRightTextColor="#A1A1A1"
+                app:sRightTextSize="14dp"
+                app:sRightTextString="即将上线"
+                app:sRightTvDrawableHeight="16dp"
+                app:sRightTvDrawableRight="@drawable/ic_chevron_right"
+                app:sRightTvDrawableWidth="16dp"
+                app:sTextViewDrawablePadding="8dp" />
+
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -103,31 +117,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_clean"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="清理缓存"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sBottomDividerLineMarginLR="8dp"
+                app:sDividerLineType="bottom"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="清理缓存"
+                app:sRightTextColor="#A1A1A1"
+                app:sRightTextSize="14dp"
+                app:sRightTextString="@string/agentweb_camera" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="#DCDCDC" />
-
-            <TextView
+            <com.allen.library.SuperTextView
                 android:id="@+id/tv_save"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="节省流量"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="14dp" />
-
+                android:layout_height="50dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:sDividerLineType="none"
+                app:sLeftTextColor="@android:color/primary_text_light"
+                app:sLeftTextSize="14dp"
+                app:sLeftTextString="自动播放"
+                app:sRightViewType="switchBtn"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

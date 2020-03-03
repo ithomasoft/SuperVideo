@@ -2,7 +2,7 @@ package com.thomas.video;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
-import com.liulishuo.filedownloader.FileDownloader;
+import com.arialyy.aria.core.Aria;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
@@ -78,6 +78,6 @@ public class SuperApplication extends BaseApplication {
         //初始数据库框架
         LitePal.initialize(this);
         //初始化下载器框架
-        FileDownloader.setup(this);
+        Aria.init(this);
     }
 }

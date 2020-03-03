@@ -13,10 +13,14 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.arialyy.aria.core.Aria;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
+import com.thomas.core.constant.PermissionConstants;
 import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.PermissionUtils;
 import com.thomas.core.utils.SPUtils;
+import com.thomas.core.utils.ServiceUtils;
 import com.thomas.core.utils.TimeUtils;
 import com.thomas.core.utils.ToastUtils;
 import com.thomas.core.utils.Utils;
@@ -24,11 +28,11 @@ import com.thomas.video.R;
 import com.thomas.video.base.ThomasMvpActivity;
 import com.thomas.video.bean.VideoDetailBean;
 import com.thomas.video.engine.ExoEngine;
-import com.thomas.video.engine.IjkEngine;
 import com.thomas.video.entity.EpisodeEntity;
 import com.thomas.video.entity.FollowEntity;
 import com.thomas.video.entity.HistoryEntity;
 import com.thomas.video.helper.DialogHelper;
+import com.thomas.video.helper.DownloadService;
 import com.thomas.video.helper.ImageHelper;
 import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.contract.DetailContract;
@@ -104,6 +108,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         title = bundle.getString("title");
         url = bundle.getString("url");
         id = bundle.getString("id");
+        Aria.download(this).register();
     }
 
     @Override
@@ -186,8 +191,6 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
         if (engine == 0) {
             videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
         } else if (engine == 1) {
-            videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, IjkEngine.class);
-        } else if (engine == 2) {
             videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, ExoEngine.class);
         } else {
             videoPlayer.setUp(onlineUrl, title, JzvdStd.SCREEN_NORMAL, JZMediaSystem.class);
@@ -243,7 +246,27 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     }
 
     private void showDownloadDialog() {
-//        DownLoadHelper.getImpl().startDownload(datas.get(0).getDownloadUrl());
+        ToastUtils.showShort("即将上线");
+
+//        PermissionUtils.permission(PermissionConstants.STORAGE)
+//                .callback(new PermissionUtils.SimpleCallback() {
+//                    @Override
+//                    public void onGranted() {
+//                        ServiceUtils.startService(DownloadService.class);
+////                        Aria.download(mActivity)
+////                                .load(datas.get(0).getDownloadUrl())
+////                                .setFilePath(PathUtils.getExternalMoviesPath() + File.separator +
+////                                        resultBean.getName() + datas.get(0).getName() + ".mp4")
+////                                .create();
+//                    }
+//
+//                    @Override
+//                    public void onDenied() {
+//
+//                    }
+//                }).request();
+
+
     }
 
     /**
