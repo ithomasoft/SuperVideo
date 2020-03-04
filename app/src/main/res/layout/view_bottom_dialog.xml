@@ -4,16 +4,11 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="360dp">
 
-    <androidx.core.widget.NestedScrollView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_dialog_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/thomas_shape_r8_white">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_dialog_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:overScrollMode="never" />
-    </androidx.core.widget.NestedScrollView>
+        android:background="@drawable/thomas_shape_r8_white"
+        android:overScrollMode="never" />
 </androidx.appcompat.widget.LinearLayoutCompat>

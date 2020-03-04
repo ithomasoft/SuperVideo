@@ -76,7 +76,7 @@ dependencies {
     //动画框架
     implementation 'com.airbnb.android:lottie:3.4.0'
     //常用工具类
-    implementation 'com.github.ithomasoft:ThomasCore:1.2.2'
+    implementation 'com.github.ithomasoft:ThomasCore:1.2.4'
     //控件注解
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'

@@ -110,7 +110,7 @@ public class SettingActivity extends ThomasActivity {
             CleanUtils.cleanInternalCache();
             String size = FileUtils.getSize(PathUtils.getInternalAppCachePath());
             tvClean.setRightString(size);
-            ToastUtils.showShort("清理了完成");
+            ToastUtils.showShort("清理完成");
 
         } else if (clickId == R.id.tv_save) {
             SPUtils.getInstance("setting").put("auto", !SPUtils.getInstance("setting").getBoolean("auto", true));

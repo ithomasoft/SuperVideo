@@ -19,7 +19,6 @@ import com.thomas.video.fragment.contract.DownloadContract;
 import com.thomas.video.fragment.presenter.DownloadPresenter;
 import com.thomas.video.helper.StatusHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,7 +41,6 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
 
     private int type = 0;
 
-    private List<DownloadEntity> datas = new ArrayList<>();
     private DownloadAdapter adapter;
 
     @Override
@@ -75,34 +73,25 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
         }
 
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            datas.clear();
+            adapter.getData().clear();
             presenter.getData(type);
         });
 
         tabLayout.addTab(tabLayout.newTab().setText("正在下载"), 0, true);
         tabLayout.addTab(tabLayout.newTab().setText("下载完成"), 1, false);
 
-        adapter = new DownloadAdapter(datas);
+        adapter = new DownloadAdapter();
         rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
         rvContent.setAdapter(adapter);
-    }
-
-
-    @Override
-    protected void onFirstUserVisible() {
-        holder.showLoading();
-        Utils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
-
-    }
-
-    @Override
-    protected void onUserVisible() {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 type = tab.getPosition();
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
+                Utils.runOnUiThreadDelayed(() -> {
+                    adapter.getData().clear();
+                    presenter.getData(type);
+                }, 1000);
             }
 
             @Override
@@ -112,13 +101,30 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                adapter.getData().clear();
                 presenter.getData(type);
             }
         });
     }
 
+
     @Override
-    public void onFailed(String failed) {
+    protected void onFirstUserVisible() {
+        holder.showLoading();
+        Utils.runOnUiThreadDelayed(() -> {
+            adapter.getData().clear();
+            presenter.getData(type);
+        }, 1000);
+
+    }
+
+    @Override
+    protected void onUserVisible() {
+
+    }
+
+    @Override
+    public void onFailed(Object tag, String failed) {
         smartRefreshLayout.finishRefresh(false);
         holder.withData(failed).showLoadFailed();
     }
@@ -127,9 +133,7 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
     public void getDataSuccess(List<DownloadEntity> succeed) {
         holder.showLoadSuccess();
         smartRefreshLayout.finishRefresh(true);
-        datas.clear();
-        datas.addAll(succeed);
-        adapter.setNewData(datas);
+        adapter.addData(succeed);
     }
 
     @Override

@@ -137,7 +137,7 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
     }
 
     @Override
-    public void onFailed(String failed) {
+    public void onFailed(Object tag,String failed) {
         smartRefreshLayout.finishRefresh(false);
         smartRefreshLayout.finishLoadMore(false);
         if (currentPage == 1) {

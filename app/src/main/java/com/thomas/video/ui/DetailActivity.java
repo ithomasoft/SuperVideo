@@ -1,5 +1,6 @@
 package com.thomas.video.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -246,25 +247,22 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     }
 
     private void showDownloadDialog() {
-        ToastUtils.showShort("即将上线");
+        PermissionUtils.permission(PermissionConstants.STORAGE)
+                .callback(new PermissionUtils.SimpleCallback() {
+                    @Override
+                    public void onGranted() {
+                        Intent intent = new Intent(mActivity, DownloadService.class);
+                        intent.putExtra("imageUrl", resultBean.getImgUrl());
+                        intent.putExtra("downloadUrl", datas.get(currentEpisode).getDownloadUrl());
+                        intent.putExtra("fileName", resultBean.getName() + datas.get(currentEpisode).getName() + ".mp4");
+                        startService(intent);
+                    }
 
-//        PermissionUtils.permission(PermissionConstants.STORAGE)
-//                .callback(new PermissionUtils.SimpleCallback() {
-//                    @Override
-//                    public void onGranted() {
-//                        ServiceUtils.startService(DownloadService.class);
-////                        Aria.download(mActivity)
-////                                .load(datas.get(0).getDownloadUrl())
-////                                .setFilePath(PathUtils.getExternalMoviesPath() + File.separator +
-////                                        resultBean.getName() + datas.get(0).getName() + ".mp4")
-////                                .create();
-//                    }
-//
-//                    @Override
-//                    public void onDenied() {
-//
-//                    }
-//                }).request();
+                    @Override
+                    public void onDenied() {
+
+                    }
+                }).request();
 
 
     }
@@ -352,7 +350,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     }
 
     @Override
-    public void onFailed(String failed) {
+    public void onFailed(Object tag, String failed) {
         holder.withData(failed).showLoadFailed();
     }
 

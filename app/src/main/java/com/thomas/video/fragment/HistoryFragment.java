@@ -129,7 +129,7 @@ public class HistoryFragment extends LazyThomasMvpFragment<HistoryPresenter> imp
     }
 
     @Override
-    public void onFailed(String failed) {
+    public void onFailed(Object tag,String failed) {
         smartRefreshLayout.finishRefresh(false);
         holder.withData(failed).showLoadFailed();
     }

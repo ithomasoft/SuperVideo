@@ -58,12 +58,6 @@ public class BottomDialog  extends BasePopupWindow {
                 }
             }
         });
-        adapter.setOnItemClickListener(new com.chad.library.adapter.base.listener.OnItemClickListener() {
-            @Override
-            public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-
-            }
-        });
     }
 
     @Override

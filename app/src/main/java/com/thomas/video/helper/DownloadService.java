@@ -2,7 +2,7 @@ package com.thomas.video.helper;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Environment;
+import android.os.Binder;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
@@ -15,14 +15,15 @@ import com.thomas.core.utils.ToastUtils;
 import com.thomas.video.widget.DownloadNotification;
 
 public class DownloadService extends Service {
-    private static final String DOWNLOAD_URL =
-            "http://rs.0.gaoshouyou.com/d/df/db/03df9eab61dbc48a5939f671f05f1cdf.apk";
     private DownloadNotification mNotify;
+    private String downloadUrl;
+    private String fileName;
+    private String imgUrl;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new DownloadBinder();
     }
 
     @Override
@@ -30,12 +31,21 @@ public class DownloadService extends Service {
         super.onCreate();
         mNotify = new DownloadNotification(getApplicationContext());
         Aria.download(this).register();
-        Aria.download(this)
-                .load(DOWNLOAD_URL)
-                .setFilePath(PathUtils.getExternalMoviesPath() + "/service_task.apk")
-                .create();
+
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        downloadUrl = intent.getStringExtra("downloadUrl");
+        fileName = intent.getStringExtra("fileName");
+        imgUrl = intent.getStringExtra("imgUrl");
+        Aria.download(this)
+                .load(downloadUrl)
+                .setFilePath(PathUtils.getInternalAppFilesPath() + "/" + fileName)
+                .setExtendField(imgUrl)
+                .create();
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     @Override
     public void onDestroy() {
@@ -47,33 +57,46 @@ public class DownloadService extends Service {
     @Download.onTaskStart
     public void onTaskStart(DownloadTask task) {
         ToastUtils.showShort(task.getDownloadEntity().getFileName() + "，开始下载");
+        mNotify.upload(task);
     }
 
     @Download.onTaskStop
     public void onTaskStop(DownloadTask task) {
         ToastUtils.showShort(task.getDownloadEntity().getFileName() + "，停止下载");
+        mNotify.upload(task);
     }
 
     @Download.onTaskCancel
     public void onTaskCancel(DownloadTask task) {
         ToastUtils.showShort(task.getDownloadEntity().getFileName() + "，取消下载");
+        mNotify.upload(task);
     }
 
     @Download.onTaskFail
     public void onTaskFail(DownloadTask task) {
         ToastUtils.showShort(task.getDownloadEntity().getFileName() + "，下载失败");
+        mNotify.upload(task);
     }
 
     @Download.onTaskComplete
     public void onTaskComplete(DownloadTask task) {
         ToastUtils.showShort(task.getDownloadEntity().getFileName() + "，下载完成");
-        mNotify.upload(100);
+        mNotify.upload(task);
     }
 
     @Download.onTaskRunning
     public void onTaskRunning(DownloadTask task) {
-        long len = task.getFileSize();
-        int p = (int) (task.getCurrentProgress() * 100 / len);
-        mNotify.upload(p);
+        mNotify.upload(task);
+    }
+
+    private class DownloadBinder extends Binder {
+        DownloadService getService() {
+            return DownloadService.this;
+        }
+
+        public void setData(String downloadUrl, String fileName) {
+            DownloadService.this.downloadUrl = downloadUrl;
+            DownloadService.this.fileName = fileName;
+        }
     }
 }

@@ -31,12 +31,12 @@ public class DetailPresenter extends BaseMvpPresenter<DetailContract.Model, Deta
                     try {
                         detailBean = JsoupHelper.parseVideoDetail(response.succeed());
                     } catch (Exception e) {
-                        getView().onFailed("出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常异常");
                     }
                     if (detailBean != null) {
                         getView().getDataSuccess(detailBean);
                     } else {
-                        getView().onFailed("出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常异常");
                     }
 
                 }
@@ -45,7 +45,7 @@ public class DetailPresenter extends BaseMvpPresenter<DetailContract.Model, Deta
             @Override
             public void onException(Exception e) {
                 if (isViewAttached()) {
-                    getView().onFailed(e.toString());
+                    getView().onFailed(0,e.toString());
                 }
             }
         });

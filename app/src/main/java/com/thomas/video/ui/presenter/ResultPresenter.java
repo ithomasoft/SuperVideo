@@ -31,7 +31,7 @@ public class ResultPresenter extends BaseMvpPresenter<ResultContract.Model, Resu
                     try {
                         resultBean = JsoupHelper.parseSearchResult(response.succeed());
                     } catch (Exception e) {
-                        getView().onFailed("出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常异常");
                     }
 
                     getView().hasMoreData(resultBean.getPage().getPageindex() < resultBean.getPage().getPagecount());
@@ -49,7 +49,7 @@ public class ResultPresenter extends BaseMvpPresenter<ResultContract.Model, Resu
             @Override
             public void onException(Exception e) {
                 if (isViewAttached()) {
-                    getView().onFailed(e.toString());
+                    getView().onFailed(0,e.toString());
                 }
             }
         });
