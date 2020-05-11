@@ -1,16 +1,23 @@
 package com.thomas.video.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
+import com.arialyy.aria.core.task.DownloadTask;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.android.material.tabs.TabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.thomas.core.utils.ThreadUtils;
 import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
 import com.thomas.video.adapter.DownloadAdapter;
@@ -20,6 +27,11 @@ import com.thomas.video.fragment.presenter.DownloadPresenter;
 import com.thomas.video.helper.StatusHelper;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 
@@ -42,6 +54,15 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
     private int type = 0;
 
     private DownloadAdapter adapter;
+    private Timer timer;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == 0) {
+                presenter.getData(type);
+            }
+        }
+    };
 
     @Override
     protected DownloadPresenter createPresenter() {
@@ -68,12 +89,11 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
         if (holder == null) {
             holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
+                ThreadUtils.runOnUiThreadDelayed(() -> presenter.getData(type), 1000);
             });
         }
 
         smartRefreshLayout.setOnRefreshListener(refreshLayout -> {
-            adapter.getData().clear();
             presenter.getData(type);
         });
 
@@ -83,13 +103,28 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
         adapter = new DownloadAdapter();
         rvContent.setLayoutManager(new LinearLayoutManager(mActivity));
         rvContent.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                if (((DownloadEntity) adapter.getData().get(position)).getState() == 2) {
+                    Aria.download(this)
+                            .load(((DownloadEntity) adapter.getData().get(position)).getId())     //读取任务id
+                            .resume();
+                } else if (((DownloadEntity) adapter.getData().get(position)).getState() == 4) {
+                    Aria.download(this)
+                            .load(((DownloadEntity) adapter.getData().get(position)).getId())     //读取任务id
+                            .stop();
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+        });
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 type = tab.getPosition();
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> {
-                    adapter.getData().clear();
+                ThreadUtils.runOnUiThreadDelayed(() -> {
                     presenter.getData(type);
                 }, 1000);
             }
@@ -101,7 +136,6 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                adapter.getData().clear();
                 presenter.getData(type);
             }
         });
@@ -111,8 +145,7 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
     @Override
     protected void onFirstUserVisible() {
         holder.showLoading();
-        Utils.runOnUiThreadDelayed(() -> {
-            adapter.getData().clear();
+        ThreadUtils.runOnUiThreadDelayed(() -> {
             presenter.getData(type);
         }, 1000);
 
@@ -120,7 +153,15 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
 
     @Override
     protected void onUserVisible() {
-
+        if (timer == null) {
+            timer = new Timer();
+        }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(0);
+            }
+        }, 1000);
     }
 
     @Override
@@ -133,7 +174,24 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
     public void getDataSuccess(List<DownloadEntity> succeed) {
         holder.showLoadSuccess();
         smartRefreshLayout.finishRefresh(true);
-        adapter.addData(succeed);
+        adapter.setNewData(succeed);
+        if (timer == null) {
+            timer = new Timer();
+        }
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(0);
+            }
+        }, 1000);
+
+    }
+
+    @Override
+    protected void onUserInvisible() {
+
+        timer.cancel();
+        timer = null;
     }
 
     @Override

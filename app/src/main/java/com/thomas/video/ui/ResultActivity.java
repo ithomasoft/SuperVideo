@@ -14,8 +14,8 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadMoreListener;
 import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.ThreadUtils;
 import com.thomas.core.utils.ToastUtils;
-import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
 import com.thomas.video.adapter.ResultAdapter;
 import com.thomas.video.base.ThomasMvpActivity;
@@ -78,7 +78,7 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
         if (holder == null) {
             holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> {
+                ThreadUtils.runOnUiThreadDelayed(() -> {
                     currentPage = 1;
                     datas.clear();
                     presenter.getData(currentPage, key);
@@ -127,7 +127,7 @@ public class ResultActivity extends ThomasMvpActivity<ResultPresenter> implement
     @Override
     public void doBusiness() {
         holder.showLoading();
-        Utils.runOnUiThreadDelayed(new Runnable() {
+        ThreadUtils.runOnUiThreadDelayed(new Runnable() {
             @Override
             public void run() {
                 presenter.getData(currentPage, key);

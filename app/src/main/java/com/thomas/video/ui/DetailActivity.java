@@ -22,6 +22,7 @@ import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.PermissionUtils;
 import com.thomas.core.utils.SPUtils;
 import com.thomas.core.utils.ServiceUtils;
+import com.thomas.core.utils.ThreadUtils;
 import com.thomas.core.utils.TimeUtils;
 import com.thomas.core.utils.ToastUtils;
 import com.thomas.core.utils.Utils;
@@ -310,7 +311,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     @Override
     public void doBusiness() {
         holder.showLoading();
-        Utils.runOnUiThreadDelayed(() -> presenter.getData(url), 1000);
+        ThreadUtils.runOnUiThreadDelayed(() -> presenter.getData(url), 1000);
     }
 
     /**
@@ -367,7 +368,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
     public void getDataSuccess(VideoDetailBean succeed) {
         holder.showLoadSuccess();
         resultBean = succeed;
-        ImageHelper.displayImage(videoPlayer.thumbImageView, resultBean.getImgUrl());
+        ImageHelper.displayImage(videoPlayer.posterImageView, resultBean.getImgUrl());
         tvDetailAlias.setText(resultBean.getAlias());
         tvDetailArea.setText(resultBean.getArea());
         tvDetailLanguage.setText(resultBean.getLanguage());

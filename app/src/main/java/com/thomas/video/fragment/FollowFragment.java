@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.thomas.core.utils.ActivityUtils;
+import com.thomas.core.utils.ThreadUtils;
 import com.thomas.core.utils.Utils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
@@ -67,7 +68,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
         if (holder == null) {
             holder = StatusHelper.getDefault().wrap(smartRefreshLayout).withRetry(() -> {
                 holder.showLoading();
-                Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
+                ThreadUtils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
             });
         }
 
@@ -111,7 +112,7 @@ public class FollowFragment extends LazyThomasMvpFragment<FollowPresenter> imple
     @Override
     protected void onFirstUserVisible() {
         holder.showLoading();
-        Utils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
+        ThreadUtils.runOnUiThreadDelayed(() -> presenter.getData(), 1000);
     }
 
     @Override

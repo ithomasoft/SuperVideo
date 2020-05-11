@@ -236,7 +236,7 @@ public class ExoEngine extends JZMediaInterface implements Player.EventListener,
                 }
                 break;
                 case Player.STATE_ENDED: {
-                    jzvd.onAutoCompletion();
+                    jzvd.onStateAutoComplete();
                 }
                 break;
             }

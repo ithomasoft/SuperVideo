@@ -20,6 +20,7 @@ import com.thomas.video.helper.ImageHelper;
 public class DownloadAdapter extends BaseQuickAdapter<DownloadEntity, BaseViewHolder> {
     public DownloadAdapter() {
         super(R.layout.item_download);
+        addChildClickViewIds(R.id.iv_action);
     }
 
     @Override
@@ -44,4 +45,6 @@ public class DownloadAdapter extends BaseQuickAdapter<DownloadEntity, BaseViewHo
             helper.setImageResource(R.id.iv_action, R.drawable.ic_unknown);
         }
     }
+
+
 }

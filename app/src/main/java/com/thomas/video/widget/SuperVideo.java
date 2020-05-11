@@ -88,16 +88,6 @@ public class SuperVideo extends JzvdStd {
         titleTextView.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void onAutoCompletion() {
-        if (screen == SCREEN_FULLSCREEN) {
-            thumbImageView.setVisibility(View.GONE);
-            onStateAutoComplete();
-        } else {
-            super.onAutoCompletion();
-            thumbImageView.setVisibility(View.GONE);
-        }
-    }
 
 
     @Override
@@ -106,7 +96,7 @@ public class SuperVideo extends JzvdStd {
         bottomContainer.setVisibility(bottomCon);
         startButton.setVisibility(startBtn);
         loadingProgressBar.setVisibility(loadingPro);
-        thumbImageView.setVisibility(thumbImg);
+        posterImageView.setVisibility(thumbImg);
         bottomProgressBar.setVisibility(GONE);
         mRetryLayout.setVisibility(retryLayout);
     }
