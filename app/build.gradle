@@ -86,7 +86,7 @@ dependencies {
     //数据库
     implementation 'org.litepal.android:java:3.0.0'
     //播放器
-    implementation 'cn.jzvd:jiaozivideoplayer:7.3.0'
+    implementation 'cn.jzvd:jiaozivideoplayer:7.3.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
     //HTML解析器
     implementation 'org.jsoup:jsoup:1.13.1'

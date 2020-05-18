@@ -89,6 +89,11 @@ public class SuperVideo extends JzvdStd {
     }
 
 
+    @Override
+    public void onStateAutoComplete() {
+        super.onStateAutoComplete();
+        gotoScreenNormal();
+    }
 
     @Override
     public void setAllControlsVisiblity(int topCon, int bottomCon, int startBtn, int loadingPro, int thumbImg, int bottomPro, int retryLayout) {
