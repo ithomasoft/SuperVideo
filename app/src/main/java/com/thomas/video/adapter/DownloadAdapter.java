@@ -4,6 +4,7 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
+import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
@@ -27,7 +28,8 @@ public class DownloadAdapter extends BaseQuickAdapter<DownloadEntity, BaseViewHo
     protected void convert(@NonNull BaseViewHolder helper, DownloadEntity item) {
         helper.setText(R.id.tv_name, item.getFileName());
         helper.setText(R.id.tv_speed, item.getConvertSpeed());
-        ImageHelper.displayExtraImage(helper.findView(R.id.iv_pic), item.getStr());
+
+        ImageHelper.displayExtraImage(helper.findView(R.id.iv_pic), Aria.download(this).load(item.getId()).getExtendField());
         long len = item.getFileSize();
         if (len != 0) {
             int p = (int) (item.getCurrentProgress() * 100 / len);

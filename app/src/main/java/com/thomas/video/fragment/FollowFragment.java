@@ -7,10 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.ThreadUtils;
-import com.thomas.core.utils.Utils;
 import com.thomas.video.ApiConstant;
 import com.thomas.video.R;
 import com.thomas.video.adapter.FollowAdapter;
@@ -23,7 +22,6 @@ import com.thomas.video.helper.StatusHelper;
 import com.thomas.video.ui.DetailActivity;
 import com.thomas.video.widget.NormalDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

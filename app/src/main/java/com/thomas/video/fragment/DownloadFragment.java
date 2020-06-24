@@ -12,13 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arialyy.aria.core.Aria;
 import com.arialyy.aria.core.download.DownloadEntity;
-import com.arialyy.aria.core.task.DownloadTask;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.google.android.material.tabs.TabLayout;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.thomas.core.utils.ThreadUtils;
-import com.thomas.core.utils.Utils;
 import com.thomas.video.R;
 import com.thomas.video.adapter.DownloadAdapter;
 import com.thomas.video.base.LazyThomasMvpFragment;
@@ -29,9 +27,6 @@ import com.thomas.video.helper.StatusHelper;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 
@@ -116,7 +111,7 @@ public class DownloadFragment extends LazyThomasMvpFragment<DownloadPresenter> i
                             .stop();
                 }
 
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemChanged(position);
             }
         });
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

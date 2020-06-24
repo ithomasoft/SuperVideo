@@ -3,9 +3,9 @@ package com.thomas.video;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.arialyy.aria.core.Aria;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.Bugly;
 import com.thomas.core.BaseApplication;
 import com.thomas.core.utils.AppUtils;

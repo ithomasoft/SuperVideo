@@ -39,7 +39,8 @@ public class DownloadService extends Service {
         downloadUrl = intent.getStringExtra("downloadUrl");
         fileName = intent.getStringExtra("fileName");
         imgUrl = intent.getStringExtra("imgUrl");
-        Aria.download(this)
+
+        long taskId = Aria.download(this)
                 .load(downloadUrl)
                 .setFilePath(PathUtils.getInternalAppFilesPath() + "/" + fileName)
                 .setExtendField(imgUrl)

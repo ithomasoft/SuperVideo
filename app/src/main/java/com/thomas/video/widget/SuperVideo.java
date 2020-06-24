@@ -77,14 +77,14 @@ public class SuperVideo extends JzvdStd {
     }
 
     @Override
-    public void gotoScreenFullscreen() {
-        super.gotoScreenFullscreen();
+    public void gotoFullscreen() {
+        super.gotoFullscreen();
         titleTextView.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void gotoScreenNormal() {
-        super.gotoScreenNormal();
+    public void gotoNormalScreen() {
+        super.gotoNormalScreen();
         titleTextView.setVisibility(View.INVISIBLE);
     }
 
@@ -92,7 +92,7 @@ public class SuperVideo extends JzvdStd {
     @Override
     public void onStateAutoComplete() {
         super.onStateAutoComplete();
-        gotoScreenNormal();
+        gotoNormalScreen();
     }
 
     @Override

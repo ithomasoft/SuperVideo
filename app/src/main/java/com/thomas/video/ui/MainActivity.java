@@ -82,7 +82,7 @@ public class MainActivity extends ThomasActivity
             showCurrentFragment(3);
             toolbar.setTitle(StringUtils.getString(R.string.menu_download));
         } else if (id == R.id.nav_share) {
-
+            ToastUtils.showShort("广告位招租，敬请期待");
         } else if (id == R.id.nav_setting) {
             startSetting();
         } else if (id == R.id.nav_about) {
