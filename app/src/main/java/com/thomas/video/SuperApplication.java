@@ -9,16 +9,8 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.Bugly;
 import com.thomas.core.BaseApplication;
 import com.thomas.core.utils.AppUtils;
-import com.thomas.core.utils.PathUtils;
 import com.thomas.video.adapter.StatusAdapter;
 import com.thomas.video.helper.StatusHelper;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.KalleConfig;
-import com.yanzhenjie.kalle.connect.BroadcastNetwork;
-import com.yanzhenjie.kalle.connect.http.LoggerInterceptor;
-import com.yanzhenjie.kalle.connect.http.RedirectInterceptor;
-import com.yanzhenjie.kalle.cookie.DBCookieStore;
-import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
 
 import org.litepal.LitePal;
 
@@ -61,13 +53,7 @@ public class SuperApplication extends BaseApplication {
 
     @Override
     public void initNetWork() {
-        Kalle.setConfig(KalleConfig.newBuilder()
-                .cookieStore(DBCookieStore.newBuilder(this).build())
-                .cacheStore(DiskCacheStore.newBuilder(PathUtils.getExternalAppCachePath()).build())
-                .network(new BroadcastNetwork(this))
-                .addInterceptor(new LoggerInterceptor("Thomas", AppUtils.isAppDebug()))
-                .addInterceptor(new RedirectInterceptor())
-                .build());
+
     }
 
     @Override

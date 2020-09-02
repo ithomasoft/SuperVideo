@@ -11,12 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.thomas.core.ui.BaseActivity;
-import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.BarUtils;
-import com.thomas.core.utils.ClickUtils;
 import com.thomas.video.R;
 import com.thomas.video.helper.StatusHelper;
-import com.yanzhenjie.kalle.Kalle;
 
 import butterknife.ButterKnife;
 
@@ -101,10 +98,6 @@ public abstract class ThomasActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (ActivityUtils.getTopActivity() != null) {
-            //取消当前页面的所有网络请求。
-            Kalle.cancel(ActivityUtils.getTopActivity().getClass());
-        }
         super.onDestroy();
 
     }

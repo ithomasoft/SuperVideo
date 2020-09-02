@@ -11,6 +11,8 @@ import androidx.appcompat.widget.AppCompatTextView;
 import com.thomas.video.R;
 
 import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.ScaleConfig;
 
 /**
  * @author Thomas
@@ -111,12 +113,14 @@ public class NormalDialog extends BasePopupWindow {
 
     @Override
     protected Animation onCreateShowAnimation() {
-        return getDefaultScaleAnimation();
+
+        return AnimationHelper.asAnimation().withScale(ScaleConfig.CENTER).toShow();
     }
 
     @Override
     protected Animation onCreateDismissAnimation() {
-        return getDefaultScaleAnimation(false);
+
+        return AnimationHelper.asAnimation().withScale(ScaleConfig.CENTER).toDismiss();
     }
 
 

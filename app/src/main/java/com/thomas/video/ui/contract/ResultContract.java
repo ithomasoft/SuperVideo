@@ -3,9 +3,10 @@ package com.thomas.video.ui.contract;
 import com.thomas.core.mvp.IBaseMvpModel;
 import com.thomas.core.mvp.IBaseMvpView;
 import com.thomas.video.bean.SearchResultBean;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
 
 import java.util.List;
+
+import retrofit2.Callback;
 
 /**
  * @author Thomas
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public interface ResultContract {
     interface Model extends IBaseMvpModel {
-        void getData(int currentPage, String key, SimpleCallback<String> callback);
+        void getData(int currentPage, String key, Callback<String> callback);
     }
 
     interface View extends IBaseMvpView {

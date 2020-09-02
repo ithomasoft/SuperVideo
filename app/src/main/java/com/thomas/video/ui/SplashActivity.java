@@ -14,13 +14,11 @@ import com.thomas.core.utils.ActivityUtils;
 import com.thomas.core.utils.BarUtils;
 import com.thomas.core.utils.SPUtils;
 import com.thomas.core.utils.TimeUtils;
-import com.thomas.video.ApiConstant;
+import com.thomas.video.ApiService;
 import com.thomas.video.R;
 import com.thomas.video.base.ThomasActivity;
 import com.thomas.video.helper.ImageHelper;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
+import com.thomas.video.retrofit.RetrofitHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +26,9 @@ import org.jsoup.nodes.Document;
 import java.util.Date;
 
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author Thomas
@@ -94,13 +95,13 @@ public class SplashActivity extends ThomasActivity {
 
     private void getSplash() {
 
-        Kalle.get(ApiConstant.Others.ONE_URL).perform(new SimpleCallback<String>() {
-
+        RetrofitHelper.createApi(ApiService.class)
+                .getSplash().enqueue(new Callback<String>() {
             @Override
-            public void onResponse(SimpleResponse<String, String> response) {
-                if (response.isSucceed()) {
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
                     llSlogan.setVisibility(View.VISIBLE);
-                    Document document = Jsoup.parse(response.succeed());
+                    Document document = Jsoup.parse(response.body());
                     String slogan = document.getElementById("quote").text();
                     String url = document.getElementsByClass("home-img").outerHtml()
                             .replace("<div class=\"home-img\" style=\"background-image:url(", "")
@@ -111,11 +112,17 @@ public class SplashActivity extends ThomasActivity {
                     ImageHelper.displayImage(ivSplash, url);
                     SPUtils.getInstance("splash").put(flag, slogan + "_" + url);
                 }
+
+
+                new Handler().postDelayed(() -> {
+                    ActivityUtils.startActivity(MainActivity.class);
+                    ActivityUtils.finishActivity(SplashActivity.class, true);
+                }, 3500);
             }
 
             @Override
-            public void onEnd() {
-                super.onEnd();
+            public void onFailure(Call<String> call, Throwable t) {
+
                 new Handler().postDelayed(() -> {
                     ActivityUtils.startActivity(MainActivity.class);
                     ActivityUtils.finishActivity(SplashActivity.class, true);

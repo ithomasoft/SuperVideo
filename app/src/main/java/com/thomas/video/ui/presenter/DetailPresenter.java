@@ -5,8 +5,10 @@ import com.thomas.video.bean.VideoDetailBean;
 import com.thomas.video.helper.JsoupHelper;
 import com.thomas.video.ui.contract.DetailContract;
 import com.thomas.video.ui.model.DetailModel;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author Thomas
@@ -23,31 +25,33 @@ public class DetailPresenter extends BaseMvpPresenter<DetailContract.Model, Deta
 
     @Override
     public void getData(String url) {
-        getModel().getData(url, new SimpleCallback<String>() {
+
+        getModel().getData(url, new Callback<String>() {
             @Override
-            public void onResponse(SimpleResponse<String, String> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (isViewAttached()) {
                     VideoDetailBean detailBean = null;
                     try {
-                        detailBean = JsoupHelper.parseVideoDetail(response.succeed());
+                        detailBean = JsoupHelper.parseVideoDetail(response.body());
                     } catch (Exception e) {
-                        getView().onFailed(0,"出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常");
                     }
                     if (detailBean != null) {
                         getView().getDataSuccess(detailBean);
                     } else {
-                        getView().onFailed(0,"出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常");
                     }
 
                 }
             }
 
             @Override
-            public void onException(Exception e) {
+            public void onFailure(Call<String> call, Throwable t) {
                 if (isViewAttached()) {
-                    getView().onFailed(0,e.toString());
+                    getView().onFailed(0,t.toString());
                 }
             }
         });
+
     }
 }

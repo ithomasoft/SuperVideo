@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.thomas.core.ui.LazyFragment;
 import com.thomas.video.helper.StatusHelper;
-import com.yanzhenjie.kalle.Kalle;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -58,7 +57,6 @@ public abstract class LazyThomasFragment extends LazyFragment {
 
     @Override
     protected void destroyViewAndThing() {
-        Kalle.cancel(getActivity().getClass());
     }
 
     @Override

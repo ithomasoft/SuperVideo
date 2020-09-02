@@ -3,7 +3,8 @@ package com.thomas.video.ui.contract;
 import com.thomas.core.mvp.IBaseMvpModel;
 import com.thomas.core.mvp.IBaseMvpView;
 import com.thomas.video.bean.VideoDetailBean;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
+
+import retrofit2.Callback;
 
 /**
  * @author Thomas
@@ -14,7 +15,7 @@ import com.yanzhenjie.kalle.simple.SimpleCallback;
  */
 public interface DetailContract {
     interface Model extends IBaseMvpModel {
-        void getData(String url, SimpleCallback<String> callback);
+        void getData(String url, Callback<String> callback);
     }
 
     interface View extends IBaseMvpView {

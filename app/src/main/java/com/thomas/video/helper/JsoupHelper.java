@@ -33,7 +33,7 @@ public class JsoupHelper {
             dataBean.setUpdateTime(e.parent().getElementsByClass("xing_vb6").text());
             dataBean.setType(e.parent().getElementsByClass("xing_vb5").text());
             String url = e.parent().getElementsByClass("xing_vb4").select("a").attr("href");
-            dataBean.setTargetUrl(url);
+            dataBean.setTargetUrl(url.split("=")[1]);
             dataBean.setId(url.split("-")[3].replace(".html", ""));
             String title = e.parent().getElementsByClass("xing_vb4").text().trim().replace("中字", "").replace("高清", "").replace("泰语", "");
             if (title.contains("HD")) {

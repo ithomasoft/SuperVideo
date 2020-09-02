@@ -19,6 +19,9 @@ import com.thomas.video.bean.DialogItemBean;
 import java.util.List;
 
 import razerdp.basepopup.BasePopupWindow;
+import razerdp.util.animation.AnimationHelper;
+import razerdp.util.animation.Direction;
+import razerdp.util.animation.TranslationConfig;
 
 /**
  * @author Thomas
@@ -67,12 +70,14 @@ public class BottomDialog  extends BasePopupWindow {
 
     @Override
     protected Animation onCreateShowAnimation() {
-        return getTranslateVerticalAnimation(1f, 0, 360);
+
+        return AnimationHelper.asAnimation().withTranslation(TranslationConfig.FROM_BOTTOM).toShow();
     }
 
     @Override
     protected Animation onCreateDismissAnimation() {
-        return getTranslateVerticalAnimation(0, 1f, 360);
+
+        return AnimationHelper.asAnimation().withTranslation(TranslationConfig.TO_BOTTOM).toDismiss();
     }
 
     public void setOnItemClickListener(OnDialogItemClickListener onItemClickListener) {

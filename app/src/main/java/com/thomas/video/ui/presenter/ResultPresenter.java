@@ -5,8 +5,10 @@ import com.thomas.video.bean.SearchResultBean;
 import com.thomas.video.helper.JsoupHelper;
 import com.thomas.video.ui.contract.ResultContract;
 import com.thomas.video.ui.model.ResultModel;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author Thomas
@@ -23,15 +25,16 @@ public class ResultPresenter extends BaseMvpPresenter<ResultContract.Model, Resu
 
     @Override
     public void getData(int currentPage, String key) {
-        getModel().getData(currentPage, key, new SimpleCallback<String>() {
+
+        getModel().getData(currentPage, key, new Callback<String>() {
             @Override
-            public void onResponse(SimpleResponse<String, String> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (isViewAttached()) {
                     SearchResultBean resultBean = null;
                     try {
-                        resultBean = JsoupHelper.parseSearchResult(response.succeed());
+                        resultBean = JsoupHelper.parseSearchResult(response.body());
                     } catch (Exception e) {
-                        getView().onFailed(0,"出现未知异常异常");
+                        getView().onFailed(0,"出现未知异常");
                     }
 
                     getView().hasMoreData(resultBean.getPage().getPageindex() < resultBean.getPage().getPagecount());
@@ -42,16 +45,15 @@ public class ResultPresenter extends BaseMvpPresenter<ResultContract.Model, Resu
                         getView().getDataEmpty();
                     }
                 }
-
-
             }
 
             @Override
-            public void onException(Exception e) {
+            public void onFailure(Call<String> call, Throwable t) {
                 if (isViewAttached()) {
-                    getView().onFailed(0,e.toString());
+                    getView().onFailed(0,t.toString());
                 }
             }
         });
+
     }
 }

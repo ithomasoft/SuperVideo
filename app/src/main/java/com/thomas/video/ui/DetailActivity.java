@@ -131,7 +131,7 @@ public class DetailActivity extends ThomasMvpActivity<DetailPresenter> implement
                 @Override
                 public void run() {
                     holder.showLoading();
-                    presenter.getData(url);
+                    presenter.getData(id);
                 }
             });
         }
